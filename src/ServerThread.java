@@ -3,7 +3,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-public class ServerThread extends Thread{
+//不需要再更改了
+public class ServerThread extends Thread{   //用于服务端与数据库传输数据的类
     db database;
     Socket socket;
     DataInputStream in;
@@ -24,12 +25,10 @@ public class ServerThread extends Thread{
     public void run(){
       while(true){  
        try{
-         String s_user=in.readUTF(),
-                s_password=in.readUTF();
-         System.out.println("ServerThread正在run...");
-         //database=new db();
-         Double money=inquery_money(s_user,s_password);
-         out.writeUTF(Double.toString(money));
+         String s_command=in.readUTF();
+         String s_sql=in.readUTF();
+         if(s_command.equals("query")) out.writeUTF(database.db_query(s_sql));
+         if(s_command.equals("execute")) out.writeUTF(database.db_execute(s_sql));
        }
        catch(IOException e){
           System.out.println("客户离开");
@@ -38,11 +37,4 @@ public class ServerThread extends Thread{
       }
     }
 
-    public synchronized double inquery_money(String name,String password){
-       Double money;
-       String sql;
-       sql="select money from users where name='"+name+"' and password='"+password+"';";
-       money=Double.parseDouble(database.db_query(sql));
-       return money;
-    }
 }
