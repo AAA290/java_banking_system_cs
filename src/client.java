@@ -12,12 +12,27 @@ public class client {
     private char gender;
     private Date birth;
     private Double money;  
+    private Boolean xiaohu;   //false为要销户
+
+    public Boolean getXiaohu() {
+        return xiaohu;
+    }
+    public void setXiaohu(Boolean xiaohu) {
+        this.xiaohu = xiaohu;
+    }
 
     public String getBank_ID() {
         return bank_ID;
     }
-    public void setBank_ID(String bank_ID) {   //不能更改 
-        this.bank_ID=bank_ID;
+    public Boolean setBank_ID(String bank_ID) {  
+        if(bank_ID.length()==10&&Pattern.matches ("[0-9]+",bank_ID)){
+            this.bank_ID = bank_ID;
+            return true;
+        }
+        else{
+            this.bank_ID = " ";
+            return false;
+        }
     }
 
     public String getName() {

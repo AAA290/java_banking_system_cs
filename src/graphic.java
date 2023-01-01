@@ -982,19 +982,15 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
    public void act_modify(){  //修改信息实现  //没有考虑输入不符合格式的情况
       System.out.println("正在修改信息中...");
       try {
-         out.writeUTF("query_m");
-         out.writeUTF("select * from users where name='"+c.getName()+"';");  //后续改进后记得改成用bank_ID查找，因为名字可能重名，但是Bank_ID是唯一的
-         c.setBank_ID(in.readUTF());
-         String name=in.readUTF();
+         String name=c.getName();
          m_name.setText(name);
-         String pass=in.readUTF();
+         String pass=c.getPassword();
          m_pass.setText(pass);
-         in.readUTF();
-         String tel=in.readUTF();
+         String tel=c.getTel();
          m_tel.setText(tel);
-         String gender=in.readUTF();
+         String gender=String.valueOf(c.getGender());
          m_gender.setText(gender);
-         String birth=in.readUTF();
+         String birth=c.getBirth().toString();
          m_birth.setText(birth);
 
          out.writeUTF("execute");
