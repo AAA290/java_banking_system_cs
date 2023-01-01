@@ -11,7 +11,7 @@ public class ServerThread extends Thread{   //用于服务端与数据库传输�
     DataOutputStream out;
 
     public ServerThread(Socket socket){
-       this.database=new db();
+       this.database=new db();  //
        this.socket=socket;
        try{
           in=new DataInputStream(socket.getInputStream());

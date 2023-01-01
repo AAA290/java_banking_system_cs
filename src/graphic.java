@@ -5,10 +5,11 @@ import java.net.*;
 import java.io.*;
 
 public class graphic implements ActionListener{  //整个客户端页面的构造与实现的类
-   Socket socket; 
-   DataInputStream in;
-   DataOutputStream out;
-   client c,s;    //客户对象，存储/修改客户信息
+   //private actions ac;
+   //Socket socket; 
+   private DataInputStream in;
+   private DataOutputStream out;
+   private client c,s;    //客户对象，存储/修改客户信息
 
    JFrame now;  //记录当前所在界面
 
@@ -20,7 +21,7 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
    //登录界面
    JFrame f_login;
    JButton login,register,find;
-   JTextField user;  //建议还是使用bank_ID登录，而不是姓名
+   //JTextField user;  //建议还是使用bank_ID登录，而不是姓名
    JTextField bankid;
    JPasswordField password;  //密码框
 
@@ -46,7 +47,6 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
    JButton m2_find;
    JTextField m_id,m_rep;  //建议还是使用bank_ID登录，而不是姓名
 
-
    //用户找回密码界面（待完成）
    JFrame f_find_user;
    JButton u_find,m_find,get_rp;
@@ -59,10 +59,10 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
    JPasswordField password1;  //密码框
    JPasswordField password2;
 
-
    //客户的功能选择界面（待完成）
    JFrame f_user;
    JButton u1,u2,u3,u4,u5,u6;
+
    //修改信息界面
    JFrame f_modify;
    JButton modify;
@@ -72,6 +72,7 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
    JFrame f_takemoney;
    JButton take;
    JTextField t_take;
+
    //存款界面
    JFrame f_putmoney;
    JButton save;
@@ -92,6 +93,7 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
 
    //退出按钮（线程结束）
    JButton exit_1;
+
    public graphic(){     //构造方法
       //----------------------------------------------------------------------------------//
       Socket socket=new Socket();
@@ -107,6 +109,8 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       }  
       //-----------------------------------以上为与远程服务器连接--------------------------//
       c=new client();  //当新建一个GUI界面时，新建一个客户对象，即当前操作该GUI界面的客户
+      s=new client();
+      //ac=new actions(c,s);
       frame_login();  //进入登录界面
    }
 
@@ -115,11 +119,11 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
    public void frame_login(){      //登录界面
       f_login=new JFrame("登录");
       JPanel p=new JPanel();
-      user=new JTextField("name");
-      user.setPreferredSize(new Dimension(200,30));
+      bankid=new JTextField();
+      bankid.setPreferredSize(new Dimension(200,30));
       password=new JPasswordField("password");
       password.setPreferredSize(new Dimension(200,30));
-      JLabel l1=new JLabel("用户名");
+      JLabel l1=new JLabel("账号");
       l1.setPreferredSize(new Dimension(50,30));
       JLabel l2=new JLabel("密码");
       l2.setPreferredSize(new Dimension(20,30));
@@ -135,7 +139,7 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       boxV1.add(Box.createVerticalStrut(15));
       boxV1.add(l2);
       Box boxV2=Box.createVerticalBox();
-      boxV2.add(user);
+      boxV2.add(bankid);
       boxV2.add(Box.createVerticalStrut(10));
       boxV2.add(password);
       Box HBox3=Box.createHorizontalBox();
@@ -320,7 +324,6 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
 
       now=f_manager;
    }
-
 
    public void frame_delete_manager(){   //管理员销户界面
       f_closing = new JFrame("管理员销户");
@@ -749,8 +752,6 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
    }
 
 
-
-
 //--------------------------------------以下为事件监听----------------------------------------//
 
    public void actionPerformed(ActionEvent e){    //按钮事件监听
@@ -790,12 +791,13 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
 
 //------------------------------------------以下为事件实现-------------------------------------//
 
+
    public void act_login(){  //登录实现
       System.out.println("正在登录...");
-      String s_user=user.getText(),
+      String s_bankid=bankid.getText(),
               s_password=new String(password.getPassword());
-      if(!c.setName(s_user)){
-         JOptionPane.showMessageDialog(null, "用户名格式错误，用户名不得大于10个汉字字符！\n请重新输入","提示",JOptionPane.ERROR_MESSAGE);
+      if(!c.setBank_ID(s_bankid)){
+         JOptionPane.showMessageDialog(null, "银行账号格式错误\n请重新输入","提示",JOptionPane.ERROR_MESSAGE);
       }
       else if(!c.setPassword(s_password)){
          JOptionPane.showMessageDialog(null, "密码格式错误，密码不得少于4位！\n请重新输入","提示",JOptionPane.ERROR_MESSAGE);
@@ -803,7 +805,7 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       else{
          try{
             out.writeUTF("query");
-            String sql="select count(*) from users where name='"+s_user+"' and password='"+s_password+"';";
+            String sql="select count(*) from users where bank_ID='"+s_bankid+"' and password='"+s_password+"';";
             out.writeUTF(sql);
          }
          catch(IOException ex){
@@ -812,15 +814,26 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
          try{
             int count=Integer.parseInt(in.readUTF());
             if(count!=0) {
-               if(!c.getName().equals("manager")){  //客户登录
-                  System.out.println("客户"+c.getName()+"登录成功");
+               if(!c.getBank_ID().equals("0000000000")){  //客户登录
+                  System.out.println("客户"+c.getBank_ID()+"登录成功");
                   now.setVisible(false);
-                  inquery_money();
-                  System.out.println("余额"+c.getMoney());
+
+                  out.writeUTF("query_m");
+                  out.writeUTF("select * from users where bank_ID='"+c.getBank_ID()+"';");  //后续改进后记得改成用bank_ID查找，因为名字可能重名，但是Bank_ID是唯一的
+                  in.readUTF();
+                  c.setName(in.readUTF());
+                  in.readUTF();
+                  c.setIdentify_ID(in.readUTF());
+                  c.setTel(in.readUTF());
+                  c.setGender(in.readUTF().charAt(0));
+                  c.setBirth(in.readUTF());
+                  c.setMoney(Double.parseDouble(in.readUTF()));
+                  c.setXiaohu(true);
+
                   JFrame f_1=new JFrame("客户登录成功");
                   f_1.setLayout(null);
                   JLabel message=new JLabel();
-                  message.setText(c.getName()+",您已成功登录，欢迎使用飞马银行系统！");
+                  message.setText("客户"+c.getBank_ID()+",您已成功登录，欢迎使用飞马银行系统！");
                   message.setVisible(true);
                   JPanel p=new JPanel();
                   p.add(message);
@@ -841,7 +854,7 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
                }
             }
             else{
-               JOptionPane.showMessageDialog(null, "不存在该用户或用户名密码不一致！\n请重新输入","提示",JOptionPane.ERROR_MESSAGE);
+               JOptionPane.showMessageDialog(null, "不存在该用户或账号密码不一致！\n请重新输入","提示",JOptionPane.ERROR_MESSAGE);
             }
          }
          catch(IOException ee){
@@ -890,10 +903,11 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
 
    }
 
-   public void act_delete_manager(){   //管理员销户实现   //暂时没有考虑80岁以上强制销户的问题
+   public void act_delete_manager(){   //管理员销户实现   //需要改
       System.out.println("正在销户...");
-      String sname=d1.getText(),
+      String sname=d1.getText(),        //改成bank_ID
       spassword=new String(d2.getPassword());
+         //先判断一下是否存在该人
       try{
             out.writeUTF("execute");
             String sql2="delete from users where name='"+sname+"' and password='"+spassword+"';";
@@ -910,6 +924,7 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       now.setVisible(false);
       frame_findpass_manager();
    }
+
    public void act_rel_rmanager(){
       now.setVisible(false);
       JFrame f_rm=new JFrame("重置成功");
@@ -931,14 +946,17 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
 
       now=f_rm;
    }
+
    public void act_find_user(){   //用户找回密码
       now.setVisible(false);
       frame_find_user();
    }
+
    public void act_reset_password(){  //重置密码
       now.setVisible(false);
       frame_reset_password();
    }
+
    public void act_rel_rpassword(){   //真正实现重置密码
       now.setVisible(false);
       JFrame f_ru=new JFrame("重置成功");
@@ -960,6 +978,7 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
 
       now=f_ru;
    }
+
    public void act_modify(){  //修改信息实现  //没有考虑输入不符合格式的情况
       System.out.println("正在修改信息中...");
       try {
@@ -1005,7 +1024,7 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       }
    }
 
-   public void act_takemoney(){  //取款实现（待完成）
+   public void act_takemoney(){  //取款实现（待完成）  //取款考虑是否足够
       System.out.println("正在取款中...");
       System.out.println("此时的用户为： 用户名为"+c.getName()+",密码为"+c.getPassword()+"的用户"+c.getMoney()+Double.parseDouble(t_take.getText()));
       try{
@@ -1109,26 +1128,6 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
        }
    }
  
-   public void inquery_money(){   //在最开始查到金额，写入c.getMoney
-      System.out.println("正在查询中...");
-      //System.out.println("此时的用户为： 用户名为"+c.getName()+",密码为"+c.getPassword()+"的用户");
-      try{
-        out.writeUTF("query");
-        String sql="select money from users where name='"+c.getName()+"' and password='"+c.getPassword()+"';";
-        out.writeUTF(sql);
-      }
-      catch(IOException ex){
-        ex.printStackTrace();
-      }
-      try{
-          Double money=Double.parseDouble(in.readUTF());
-          c.setMoney(money);
-          System.out.println("余额为:"+money);
-      }
-      catch(IOException ee){
-        ee.printStackTrace();
-      }
-  }
    public void act_inquery_money(){   //查询实现
       System.out.println("正在查询中...");
          rs.setText("余额为:"+c.getMoney());
@@ -1157,19 +1156,19 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       now=f_1;
    }
 
-   public void input_sql() {   // 把所有信息重写入数据库并退出（目前只写了money）
-      try {
-         Double money=Double.parseDouble(t_money.getText());
-         System.out.println("最终余额为："+c.getMoney());
-         out.writeUTF("execute");
-         String sql="update users set money = "+c.getMoney()+" where name='"+c.getName()+";";
-         out.writeUTF(sql);
-         System.out.println("写入完成数据库");
-      } catch (IOException e) {
-         e.printStackTrace();
-      }
-      System.exit(0);
-   }
+   // public void input_sql() {   // 把所有信息重写入数据库并退出（目前只写了money）
+   //    try {
+   //       Double money=Double.parseDouble(t_money.getText());
+   //       System.out.println("最终余额为："+c.getMoney());
+   //       out.writeUTF("execute");
+   //       String sql="update users set money = "+c.getMoney()+" where name='"+c.getName()+"';";
+   //       out.writeUTF(sql);
+   //       System.out.println("写入完成数据库");
+   //    } catch (IOException e) {
+   //       e.printStackTrace();
+   //    }
+   //    System.exit(0);
+   // }
 
 //--------------------------------------以下为界面转换实现(整体待优化)----------------------------//
  //代码相似度高，最好能修改后实现代码复用，减少方法的数量
