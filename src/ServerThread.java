@@ -10,8 +10,8 @@ public class ServerThread extends Thread{   //用于服务端与数据库传输�
     DataInputStream in;
     DataOutputStream out;
 
-    public ServerThread(Socket socket){
-       this.database=new db();  //
+    public ServerThread(db database,Socket socket){
+       this.database=database;
        this.socket=socket;
        try{
           in=new DataInputStream(socket.getInputStream());
@@ -20,6 +20,7 @@ public class ServerThread extends Thread{   //用于服务端与数据库传输�
        catch(Exception e){
           e.printStackTrace();
        }
+       //if(i==0) database.db_initial();
     }
 
     public void run(){

@@ -10,11 +10,12 @@ public class db{     //用于数据库相关操作的类
         Class.forName(DBDriver);     //加载驱动类
         String url="jdbc:mysql://localhost/bank";  //连接名为bank的数据库
         String user="root";  
-        String password="lzd17752";
+        String password="root";
         System.out.println("Connect to db...");
         con=DriverManager.getConnection(url,user,password);
         state=con.createStatement();
-        db_initial();     //初始化
+        //db_initial();     //初始化
+        System.out.println("Connect successfully.");  //成功连接
       } 
       catch(ClassNotFoundException e){
           System.out.println("ClassNotFoundException :"+e.getMessage());
@@ -22,7 +23,6 @@ public class db{     //用于数据库相关操作的类
       catch(SQLException ex){
           System.out.println("SQLException :"+ex.getMessage());
       }
-      System.out.println("Connect successfully.");  //成功连接
     }
 
     public synchronized String db_execute(String sql){     //mysql直接执行sql语句,返回是否执行成功
@@ -62,7 +62,8 @@ public class db{     //用于数据库相关操作的类
       try{  
         ResultSet rs=state.executeQuery(sql);
         rs.next();
-        for(int i=0;i<=6;i++){
+        res[0]=String.valueOf(rs.getInt(1));
+        for(int i=1;i<=6;i++){
           res[i]= rs.getString(i+1);
         }
         res[7]=String.valueOf(rs.getInt(8));
@@ -81,7 +82,7 @@ public class db{     //用于数据库相关操作的类
       try{
       state.execute("drop table if exists users;");  //如果原来存在该表，先删除原有的users表
       state.execute("create table users("                    //创建users表
-      +"bank_ID varchar(10) not null unique,"                //银行ID
+      +"bank_ID int(10) unsigned zerofill auto_increment,"                //银行ID,由MySQL自动编号
       +"name varchar(10) not null default 'name',"           //姓名
       +"password varchar(10) not null default 'password',"   //密码
       +"identify_ID varchar(12) not null default 'identyid' unique,"            //身份证号（学号）
@@ -96,11 +97,12 @@ public class db{     //用于数据库相关操作的类
       //限制电话号码必须是数字且必须是11位
       考虑到限制条件应该在客户端GUI输入时就进行检查反馈，可以在此处不添加约束条件
       */
-      state.execute("insert into users(bank_ID,name,password) values('0000000000','manager','feimabank');");
-      state.execute("insert into users values('1234567891','小红','AAA01','111111111111','12345678901','F','2022-12-15',80.0);");  
-      state.execute("insert into users values('1234567892','小明','BBB02','222222222222','12345678901','M','2022-12-15',70.0);");
-      state.execute("insert into users values('1234567893','钮祜禄·甄嬛','CCC03','333333333333','12345678901','F','2022-12-15',10000.0);");
-      state.execute("insert into users values('1234567894','乾隆帝爱新觉罗·弘历','abc00','567890123456','12345678901','M','2022-12-15',1000.0);");
+      state.execute("alter table users AUTO_INCREMENT=1000000000;");
+      state.execute("insert into users(bank_ID,name,password) values(null,'manager','feimabank');");
+      state.execute("insert into users values(null,'小红','AAA01','111111111111','12345678901','F','2022-12-15',80.0);");  
+      state.execute("insert into users values(null,'小明','BBB02','222222222222','12345678901','M','2022-12-15',70.0);");
+      state.execute("insert into users values(null,'钮祜禄·甄嬛','CCC03','333333333333','12345678901','F','2022-12-15',10000.0);");
+      state.execute("insert into users values(null,'乾隆帝爱新觉罗·弘历','abc00','567890123456','12345678901','M','2022-12-15',1000.0);");
       //初始状态向表中存入4组数据
       }
       catch(SQLException ex){

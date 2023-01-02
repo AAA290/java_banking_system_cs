@@ -66,8 +66,15 @@ public class client {
     public String getIdentify_ID() { 
         return identify_ID;
     }
-    public void setIdentify_ID(String identify_ID) {  //不能更改 
-        this.identify_ID = identify_ID;
+    public boolean setIdentify_ID(String identify_ID) {  //不能更改 
+        if(identify_ID.length()==12&&Pattern.matches ("[0-9]+",identify_ID)){
+            this.identify_ID = identify_ID;
+            return true;
+        }
+        else{
+            //this.identify_ID = " ";
+            return false;
+        }
     }
 
     public String getTel() {

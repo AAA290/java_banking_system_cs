@@ -1,5 +1,7 @@
 import java.awt.*;
 import java.awt.event.*;
+
+import javax.net.ssl.TrustManager;
 import javax.swing.*;
 import java.net.*;
 import java.io.*;
@@ -95,6 +97,8 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
    JButton exit_1;
 
    public graphic(){     //构造方法
+      String lookAndFeel = "com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel";
+      try{UIManager.setLookAndFeel(lookAndFeel);}catch(Exception e){e.printStackTrace();}
       //----------------------------------------------------------------------------------//
       Socket socket=new Socket();
       try{
@@ -689,11 +693,22 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       HBox.add(new JLabel("收款人bank_ID"));
       HBox.add(Box.createHorizontalStrut(5));
       HBox.add(t_bankid);
+      Box hb1=Box.createHorizontalBox();
+      hb1.add(new JLabel("转账金额"));
+      hb1.add(Box.createHorizontalStrut(5));
+      hb1.add(t_money);
+      Box boxV=Box.createVerticalBox();
+      //boxV.add(Box.createVerticalStrut(15));
+      boxV.add(HBox);
+      boxV.add(Box.createVerticalStrut(5));
+      boxV.add(hb1);
+      boxV.add(Box.createVerticalStrut(5));
+      boxV.add(transfer);
       JPanel p=new JPanel();
-      p.add(HBox);
+      p.add(boxV);
       f_transfer.add(p);
       f_transfer.setLayout(null);
-      p.setBounds(10, 55, 360, 200);
+      p.setBounds(1, 55, 360, 200);
       transfer.addActionListener(this);
       f_transfer.setBounds(100,100,360,300);
       f_transfer.setVisible(true);
@@ -799,10 +814,10 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       if(!c.setBank_ID(s_bankid)){
          JOptionPane.showMessageDialog(null, "银行账号格式错误\n请重新输入","提示",JOptionPane.ERROR_MESSAGE);
       }
-      else if(!c.setPassword(s_password)){
+      if(!c.setPassword(s_password)){
          JOptionPane.showMessageDialog(null, "密码格式错误，密码不得少于4位！\n请重新输入","提示",JOptionPane.ERROR_MESSAGE);
       }
-      else{
+      if(c.setBank_ID(s_bankid)&&c.setPassword(s_password)){
          try{
             out.writeUTF("query");
             String sql="select count(*) from users where bank_ID='"+s_bankid+"' and password='"+s_password+"';";
@@ -814,12 +829,12 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
          try{
             int count=Integer.parseInt(in.readUTF());
             if(count!=0) {
-               if(!c.getBank_ID().equals("0000000000")){  //客户登录
+               if(!c.getBank_ID().equals("1000000000")){  //客户登录
                   System.out.println("客户"+c.getBank_ID()+"登录成功");
                   now.setVisible(false);
 
                   out.writeUTF("query_m");
-                  out.writeUTF("select * from users where bank_ID='"+c.getBank_ID()+"';");  //后续改进后记得改成用bank_ID查找，因为名字可能重名，但是Bank_ID是唯一的
+                  out.writeUTF("select * from users where bank_ID="+c.getBank_ID()+";");  //后续改进后记得改成用bank_ID查找，因为名字可能重名，但是Bank_ID是唯一的
                   in.readUTF();
                   c.setName(in.readUTF());
                   in.readUTF();
@@ -865,34 +880,42 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
 
    public void act_register(){   //注册实现
       System.out.println("正在注册...");
-      String sid = f1.getText();
+      //String sid = f1.getText();
       String sname = f2.getText();
       String spassword =new String(f3.getPassword());
 		String sshenfen = f4.getText();
       String stel = f5.getText();
       String ssex = f6.getText();
       String sbirth = f7.getText();
-		//String money = f8.getText();
-      String LoginID =f1.getText();//查询是否有相同的用户名
-      String sql1 = "select name from user where bank_ID='"+LoginID+"';";	//从数据库导出登录名
-      if(LoginID.equals(sql1)) {   //有错，还没改
-         JOptionPane.showMessageDialog(null, "注册失败！该用户已存在...","提示",JOptionPane.ERROR_MESSAGE);
-      }
-      else{
+	//	String  money = f8.getText();
+      //  if(!c.setBank_ID(sid)){
+      //       JOptionPane.showMessageDialog(null, "银行卡号输入格式错误！","提示",JOptionPane.ERROR_MESSAGE);       
+      //    }
+      if(!c.setName(sname)){
+            JOptionPane.showMessageDialog(null, "用户名输入格式错误！","提示",JOptionPane.ERROR_MESSAGE); 
+         }
+      if(!c.setIdentify_ID(sshenfen)){
+         JOptionPane.showMessageDialog(null, "身份证输入格式错误！","提示",JOptionPane.ERROR_MESSAGE); 
+      }  
+      if(!c.setPassword(spassword)){
+            JOptionPane.showMessageDialog(null, "密码输入格式错误！","提示",JOptionPane.ERROR_MESSAGE); 
+         }
+      if(!c.setTel(stel)){
+            JOptionPane.showMessageDialog(null, "电话输入格式错误！","提示",JOptionPane.ERROR_MESSAGE); 
+         }
+      if(!c.setBirth(sbirth)){
+            JOptionPane.showMessageDialog(null, "生日输入格式错误！","提示",JOptionPane.ERROR_MESSAGE); 
+         }
+      if(c.setName(sname)&&c.setIdentify_ID(sshenfen)&&c.setPassword(spassword)&&c.setTel(stel)&&c.setBirth(sbirth)){ 
          try{
             out.writeUTF("execute");
-            String sql="insert into users(bank_ID,name,password,identify_ID,tel,gender,birth,money)values('"+sid+"','"+sname+"','"+spassword+"','"+sshenfen+"','"+stel+"','"+ssex+"','"+sbirth+"');";
+            String sql=" insert into users(name,password,identify_ID,tel,gender,birth)values('"+sname+"','"+spassword+"','"+sshenfen+"','"+stel+"','"+ssex.charAt(0)+"'','"+sbirth+"');";
             out.writeUTF(sql);
-            JOptionPane.showMessageDialog(null, "注册成功！","提示",JOptionPane.ERROR_MESSAGE); 
-            if(!c.setBirth(sbirth)){
-               JOptionPane.showMessageDialog(null, "生日输入格式错误！","提示",JOptionPane.ERROR_MESSAGE); 
-            }
-            c.setGender(ssex.charAt(0));
-            c.setMoney(2000.0);  //新客户送2000
-            c.setPassword(spassword);
-            c.setTel(stel);
-            c.setIdentify_ID(sid);
-            c.setName(sname);
+            JOptionPane.showMessageDialog(null, "注册成功！","提示",JOptionPane.ERROR_MESSAGE);
+            c.setMoney(2000.0);  //新客户送2000   
+            out.writeUTF("query");
+            out.writeUTF("select bank_ID from users where identify_ID='"+sshenfen+"';");
+            c.setBank_ID(in.readUTF());
          }catch(IOException ex){
                ex.printStackTrace();
          }
@@ -994,25 +1017,25 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
          m_birth.setText(birth);
 
          out.writeUTF("execute");
-         String sql="update users set name ='"+m_name.getText()+"' where bank_ID='"+c.getBank_ID()+"';";
+         String sql="update users set name ='"+m_name.getText()+"' where bank_ID="+c.getBank_ID()+";";
          if(!m_name.getText().equals(name)){
-            sql="update users set name ='"+m_name.getText()+"' where bank_ID='"+c.getBank_ID()+"';";
+            sql="update users set name ='"+m_name.getText()+"' where bank_ID="+c.getBank_ID()+";";
             out.writeUTF(sql);
          }
          if(!m_pass.getText().equals(pass)){
-            sql="update users set password ='"+m_pass.getText()+"' where bank_ID='"+c.getBank_ID()+"';";
+            sql="update users set password ='"+m_pass.getText()+"' where bank_ID="+c.getBank_ID()+";";
             out.writeUTF(sql);
          }
          if(!m_tel.getText().equals(tel)){
-            sql="update users set tel ='"+m_tel.getText()+"' where bank_ID='"+c.getBank_ID()+"';";
+            sql="update users set tel ='"+m_tel.getText()+"' where bank_ID="+c.getBank_ID()+";";
             out.writeUTF(sql);
          }
          if(!m_gender.getText().equals(gender)){
-            sql="update users set gender ='"+m_gender.getText()+"' where bank_ID='"+c.getBank_ID()+"';";
+            sql="update users set gender ='"+m_gender.getText()+"' where bank_ID="+c.getBank_ID()+";";
             out.writeUTF(sql);
          }
          if(!m_birth.getText().equals(birth)){
-            sql="update users set birth ='"+m_birth.getText()+"' where bank_ID='"+c.getBank_ID()+"';";
+            sql="update users set birth ='"+m_birth.getText()+"' where bank_ID="+c.getBank_ID()+";";
             out.writeUTF(sql);
          }
       } catch (IOException e) {
@@ -1027,7 +1050,7 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
          c.setMoney(c.getMoney()-Double.parseDouble(t_take.getText()));
          System.out.println("已完成取款.此时的用户余额为"+c.getMoney());
          out.writeUTF("execute");
-         String sql="update users set money = "+c.getMoney()+" where name='"+c.getName()+";";
+         String sql="update users set money = "+c.getMoney()+" where bank_ID="+c.getBank_ID()+";";
          out.writeUTF(sql);
          System.out.println("已完成写入数据库"+c.getMoney());
          now.setVisible(false);
@@ -1044,7 +1067,7 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       try{
         c.setMoney(c.getMoney()+Double.parseDouble(t_save.getText()));
         out.writeUTF("execute");
-        String sql="update users set money = "+c.getMoney()+" where name='"+c.getName()+";";
+        String sql="update users set money = "+c.getMoney()+" where bank_ID="+c.getBank_ID()+";";
         out.writeUTF(sql);
       }
       catch(IOException ex){
@@ -1054,57 +1077,62 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
 
    public void act_transfer(){  //转账实现   //暂时没考虑转账的客户余额不足的问题
       System.out.println("正在转账中...");
-      try{
-         out.writeUTF("query");
-         String sql="select cout(*) from users where 'bank_ID='"+t_bankid.getText()+"';";
-         out.writeUTF(sql);
-         
-         int count=Integer.parseInt(in.readUTF());
-         if(count==0) JOptionPane.showMessageDialog(null, "不存在该用户！\n请重新输入","提示",JOptionPane.ERROR_MESSAGE); 
-         else{
-            s.setBank_ID(t_bankid.getText());
+      if(!s.setBank_ID(t_bankid.getText())){
+         JOptionPane.showMessageDialog(null, "银行账号格式错误\n请重新输入","提示",JOptionPane.ERROR_MESSAGE);
+      }
+      else{
+         try{
             out.writeUTF("query");
-            sql="select name from users where 'bank_ID='"+s.getBank_ID()+"';";
+            String sql="select count(*) from users where bank_ID="+s.getBank_ID()+";";
             out.writeUTF(sql);
-            s.setName(in.readUTF());
+            
+            int count=Integer.parseInt(in.readUTF());
+            if(count==0) JOptionPane.showMessageDialog(null, "不存在该用户！\n请重新输入","提示",JOptionPane.ERROR_MESSAGE); 
+            else{
+               //s.setBank_ID(t_bankid.getText());
+               out.writeUTF("query");
+               sql="select name from users where bank_ID="+s.getBank_ID()+";";
+               out.writeUTF(sql);
+               s.setName(in.readUTF());
 
-            out.writeUTF("query");
-            sql="select money from users where 'bank_ID='"+s.getBank_ID()+"';";
-            out.writeUTF(sql);
-            s.setMoney(Double.parseDouble(in.readUTF()));
+               out.writeUTF("query");
+               sql="select money from users where bank_ID="+s.getBank_ID()+";";
+               out.writeUTF(sql);
+               s.setMoney(Double.parseDouble(in.readUTF()));
 
-            JFrame f_1=new JFrame("提示");
-            f_1.setLayout(null);
-            yes=new JButton("确认");
-            JLabel message1=new JLabel();
-            message1.setText("当前收款人姓名为"+s.getName()+",转账金额为"+t_money.getText());
-            //JLabel message2=new JLabel("请在核实正确后点击"确认"进行转账");
-            Box vb = Box.createVerticalBox();
-            vb.add(message1);
-            vb.add(Box.createVerticalStrut(10));
-            vb.add(new JLabel("请在确认正确后进行转账"));
-            //message.setVisible(true);
-            JPanel p=new JPanel();
-            p.add(vb);
-            next_1.setText("取消");
-            p.add(next_1);
-            p.add(yes);
-            f_1.add(p);
-            p.setBounds(0, 40, 300, 100);
-            yes.addActionListener(this);
-            next_1.addActionListener(this);
-            next_1.setEnabled(true);
-            f_1.setBounds(100,100,300,200);
-            f_1.setVisible(true);
-            f_1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+               JFrame f_1=new JFrame("提示");
+               f_1.setLayout(null);
+               yes=new JButton("确认");
+               JLabel message1=new JLabel();
+               message1.setText("当前收款人姓名为"+s.getName()+",转账金额为"+t_money.getText());
+               //JLabel message2=new JLabel("请在核实正确后点击"确认"进行转账");
+               Box vb = Box.createVerticalBox();
+               vb.add(message1);
+               vb.add(Box.createVerticalStrut(10));
+               vb.add(new JLabel("请在确认正确后进行转账"));
+               //message.setVisible(true);
+               JPanel p=new JPanel();
+               p.add(vb);
+               next_1.setText("取消");
+               p.add(next_1);
+               p.add(yes);
+               f_1.add(p);
+               p.setBounds(0, 40, 300, 100);
+               yes.addActionListener(this);
+               next_1.addActionListener(this);
+               next_1.setEnabled(true);
+               f_1.setBounds(100,100,300,200);
+               f_1.setVisible(true);
+               f_1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-            now=f_1;
-            //JOptionPane.showMessageDialog(null, "当前收款人姓名为"+in.readUTF()+",转账金额为"+t_money.getText()+"\n请在确认正确后进行转账","提示",JOptionPane.ERROR_MESSAGE);
+               now=f_1;
+               //JOptionPane.showMessageDialog(null, "当前收款人姓名为"+in.readUTF()+",转账金额为"+t_money.getText()+"\n请在确认正确后进行转账","提示",JOptionPane.ERROR_MESSAGE);
+            }
          }
-       }
-       catch(IOException ex){
-         ex.printStackTrace();
-       }
+         catch(IOException ex){
+            ex.printStackTrace();
+         }
+      }
    }
 
    public void real_transfer(){  
@@ -1112,12 +1140,12 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
          Double money=Double.parseDouble(t_money.getText());
          s.setMoney(s.getMoney()+money);
          out.writeUTF("execute");
-         String sql="update users set money = "+s.getMoney()+" where bank_ID='"+s.getBank_ID()+";";
+         String sql="update users set money = "+s.getMoney()+" where bank_ID="+s.getBank_ID()+";";
          out.writeUTF(sql);
 
          c.setMoney(c.getMoney()-money);
          out.writeUTF("execute");
-         sql="update users set money = "+c.getMoney()+" where name='"+c.getName()+";";  //这里最好用bank_ID查询（需优化）
+         sql="update users set money = "+c.getMoney()+" where bank_ID="+c.getBank_ID()+";";  //这里最好用bank_ID查询（需优化）
          out.writeUTF(sql);
        } catch (IOException e) {
          e.printStackTrace();

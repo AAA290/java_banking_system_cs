@@ -3,7 +3,9 @@ import java.net.*;
 
 //不需要再更改了
 public class server_root {    //用于创建服务器并与客户端相连，实现客户端与服务器数据传输的类
-   public server_root(){  
+   private db database;
+   public server_root(){ 
+      this.database=new db();
       ServerSocket server=null;   //服务器套接字
       Socket you=null;  //客户端
          try {  
@@ -20,7 +22,7 @@ public class server_root {    //用于创建服务器并与客户端相连，实
             System.out.println("正在等待客户");  
          }
          if(you!=null) {  
-            new ServerThread(you).start();    //如果有客户端连接，则为此客户端新建一个线程，并使线程开始工作
+            new ServerThread(database,you).start();    //如果有客户端连接，则为此客户端新建一个线程，并使线程开始工作
          }else{continue;}
       }
    }
