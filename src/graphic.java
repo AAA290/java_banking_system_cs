@@ -1,7 +1,5 @@
 import java.awt.*;
 import java.awt.event.*;
-
-import javax.net.ssl.TrustManager;
 import javax.swing.*;
 import java.net.*;
 import java.io.*;
@@ -17,8 +15,9 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
 
    //查询界面
    JFrame f_inquery;
-   JButton inquery;  
-   JTextArea rs;
+   //JButton inquery;  
+   JLabel rs;
+   //JTextArea rs;
 
    //登录界面
    JFrame f_login;
@@ -125,7 +124,7 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       JPanel p=new JPanel();
       bankid=new JTextField();
       bankid.setPreferredSize(new Dimension(200,30));
-      password=new JPasswordField("password");
+      password=new JPasswordField();
       password.setPreferredSize(new Dimension(200,30));
       JLabel l1=new JLabel("账号");
       l1.setPreferredSize(new Dimension(50,30));
@@ -580,43 +579,70 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
    public void frame_modify(){  //修改信息界面
       f_modify=new JFrame("修改信息");
       modify=new JButton("确认修改");
+      next_1=new JButton(" 返回 ");
       
       m_name=new JTextField();
+      m_name.setPreferredSize(new Dimension(50, 10));
       m_tel=new JTextField();
+      m_tel.setPreferredSize(new Dimension(50, 10));
       m_pass=new JTextField();
+      m_pass.setPreferredSize(new Dimension(50, 10));
       m_birth=new JTextField();
+      m_birth.setPreferredSize(new Dimension(50, 10));
       m_gender=new JTextField();
+      m_gender.setPreferredSize(new Dimension(50, 10));
+      m_name.setText(c.getName());
+      m_pass.setText(c.getPassword());
+      m_tel.setText(c.getTel());
+      m_gender.setText(String.valueOf(c.getGender()));
+      m_birth.setText(c.getBirth());
 
-      Box bv1 = Box.createVerticalBox();
-      bv1.add(new JLabel("姓名"));
-      bv1.add(Box.createVerticalStrut(10));
-      bv1.add(new JLabel("电话号码"));
-      bv1.add(Box.createVerticalStrut(10));
-      bv1.add(new JLabel("密码"));
-      bv1.add(Box.createVerticalStrut(10));
-      bv1.add(new JLabel("出生日期"));
-      bv1.add(Box.createVerticalStrut(10));
-      bv1.add(new JLabel("性别"));
-      Box bv2 = Box.createVerticalBox();
-      bv2.add(m_name);
-      bv2.add(Box.createVerticalStrut(10));
-      bv2.add(m_tel);
-      bv2.add(Box.createVerticalStrut(10));
-      bv2.add(m_pass);
-      bv2.add(Box.createVerticalStrut(10));
-      bv2.add(m_birth);
-      bv2.add(Box.createVerticalStrut(10));
-      bv2.add(m_gender);
+      Box bh1= Box.createHorizontalBox();
+      bh1.add(new JLabel("姓名  "));
+      bh1.add(Box.createHorizontalStrut(3));
+      bh1.add(m_name);
+      Box bh2= Box.createHorizontalBox();
+      bh2.add(new JLabel("密码  "));
+      bh2.add(Box.createHorizontalStrut(3));
+      bh2.add(m_pass);
+      Box bh3= Box.createHorizontalBox();
+      bh3.add(new JLabel("电话号码"));
+      bh3.add(Box.createHorizontalStrut(3));
+      bh3.add(m_tel);
+      Box bh4= Box.createHorizontalBox();
+      bh4.add(new JLabel("性别  "));
+      bh4.add(Box.createHorizontalStrut(3));
+      bh4.add(m_gender);
+      Box bh5= Box.createHorizontalBox();
+      bh5.add(new JLabel("出生日期"));
+      bh5.add(Box.createHorizontalStrut(3));
+      bh5.add(m_birth);
+      Box bh6= Box.createHorizontalBox();
+      bh6.add(modify);
+      bh6.add(Box.createHorizontalStrut(3));
+      bh6.add(next_1);
 
-      Box bh = Box.createHorizontalBox();
-      bh.add(bv1);
-      bh.add(Box.createHorizontalStrut(3));
-      bh.add(bv2);
-      bh.add(Box.createHorizontalStrut(3));
-      bh.add(modify);
+      Box bv = Box.createVerticalBox();
+      bv.add(bh1);
+      bv.add(Box.createVerticalStrut(10));
+      bv.add(bh2);
+      bv.add(Box.createVerticalStrut(10));
+      bv.add(bh3);
+      bv.add(Box.createVerticalStrut(10));
+      bv.add(bh4);
+      bv.add(Box.createVerticalStrut(10));
+      bv.add(bh5);
+      bv.add(Box.createVerticalStrut(10));
+      bv.add(bh6);
 
+      JPanel p=new JPanel();
+      p.add(bv);
+      f_modify.add(p);
+      f_modify.setLayout(null);
+      p.setBounds(2, 40, 360, 200);
       modify.addActionListener(this);
-      f_modify.setBounds(100,100,360,300);
+      next_1.addActionListener(this);
+      f_modify.setBounds(430,200,360,300);
       f_modify.setVisible(true);
       f_modify.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -635,9 +661,9 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       HBox1.add(Box.createHorizontalStrut(20));
       HBox1.add(t_take);
       Box HBox2=Box.createHorizontalBox();
-      HBox2.add(next_1);
-      HBox2.add(Box.createHorizontalStrut(20));
       HBox2.add(take);
+      HBox2.add(Box.createHorizontalStrut(20));
+      HBox2.add(next_1);
       Box boxTV=Box.createVerticalBox();
       boxTV.add(Box.createVerticalStrut(15));
       boxTV.add(HBox1);
@@ -650,7 +676,7 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       p.setBounds(7, 55, 360, 200);
       take.addActionListener(this);
       next_1.addActionListener(this);
-      f_takemoney.setBounds(480,220,360,300);
+      f_takemoney.setBounds(430,200,360,300);
       f_takemoney.setVisible(true);
       f_takemoney.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -660,24 +686,32 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
    public void frame_putmoney(){   //存款界面（待完成）
      f_putmoney=new JFrame("存款");
      save=new JButton("确认");
+     next_1=new JButton("返回");
      JLabel l_save=new JLabel("存款数额:");
      t_save=new JTextField();
+     t_save.setPreferredSize(new Dimension(100, 30));
      Box HBox=Box.createHorizontalBox();
      HBox.add(l_save);
-     HBox.add(Box.createHorizontalStrut(5));
+     HBox.add(Box.createHorizontalStrut(20));
      HBox.add(t_save);
+     Box HBox2=Box.createHorizontalBox();
+     HBox2.add(save);
+     HBox2.add(Box.createHorizontalStrut(20));
+     HBox2.add(next_1);
+
      Box boxV=Box.createVerticalBox();
      boxV.add(Box.createVerticalStrut(15));
      boxV.add(HBox);
-     boxV.add(Box.createVerticalStrut(5));
-     boxV.add(save);
+     boxV.add(Box.createVerticalStrut(30));
+     boxV.add(HBox2);
      JPanel p=new JPanel();
      p.add(boxV);
      f_putmoney.add(p);
      f_putmoney.setLayout(null);
-     p.setBounds(7, 55, 360, 200);
+     p.setBounds(2, 55, 360, 200);
      save.addActionListener(this);
-     f_putmoney.setBounds(100,100,360,300);
+     next_1.addActionListener(this);
+     f_putmoney.setBounds(430,200,360,300);
      f_putmoney.setVisible(true);
      f_putmoney.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -687,30 +721,38 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
    public void frame_transfer(){  //转账界面
       f_transfer=new JFrame("转账");
       transfer=new JButton("确认转账");
+      next_1=new JButton(" 返回 ");
       t_money=new JTextField();
       t_bankid=new JTextField();
+      t_money.setPreferredSize(new Dimension(100, 30));
+      t_bankid.setPreferredSize(new Dimension(100, 30));
       Box HBox=Box.createHorizontalBox();
-      HBox.add(new JLabel("收款人bank_ID"));
-      HBox.add(Box.createHorizontalStrut(5));
+      HBox.add(new JLabel("收款人账号"));
+      HBox.add(Box.createHorizontalStrut(10));
       HBox.add(t_bankid);
       Box hb1=Box.createHorizontalBox();
-      hb1.add(new JLabel("转账金额"));
-      hb1.add(Box.createHorizontalStrut(5));
+      hb1.add(new JLabel("转账金额  "));
+      hb1.add(Box.createHorizontalStrut(10));
       hb1.add(t_money);
+      Box hb2=Box.createHorizontalBox();
+      hb2.add(transfer);
+      hb2.add(Box.createHorizontalStrut(15));
+      hb2.add(next_1);
       Box boxV=Box.createVerticalBox();
       //boxV.add(Box.createVerticalStrut(15));
       boxV.add(HBox);
-      boxV.add(Box.createVerticalStrut(5));
+      boxV.add(Box.createVerticalStrut(15));
       boxV.add(hb1);
-      boxV.add(Box.createVerticalStrut(5));
-      boxV.add(transfer);
+      boxV.add(Box.createVerticalStrut(30));
+      boxV.add(hb2);
       JPanel p=new JPanel();
       p.add(boxV);
       f_transfer.add(p);
       f_transfer.setLayout(null);
-      p.setBounds(1, 55, 360, 200);
+      p.setBounds(0, 55, 360, 200);
       transfer.addActionListener(this);
-      f_transfer.setBounds(100,100,360,300);
+      next_1.addActionListener(this);
+      f_transfer.setBounds(430,200,360,300);
       f_transfer.setVisible(true);
       f_transfer.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -718,22 +760,25 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
    }
 
    public void frame_inquery(){     //查询界面
-      f_inquery=new JFrame("查询存款");
+      f_inquery=new JFrame("查询余额");
       f_inquery.setLocationRelativeTo(null);
-      inquery=new JButton("查询账户余额");
-      rs=new JTextArea(2,12);
-      Container con=f_inquery.getContentPane();
-      con.setLayout(new FlowLayout());
-      con.add(inquery);
-      inquery.addActionListener(this);
-      con.add(new JScrollPane(rs));
-      next_1 = new JButton("确认并返回");
-      con.add(next_1);
-      f_inquery.setBounds(500,210,360,300);
+      //inquery=new JButton("查询账户余额");
+      //rs=new JTextArea(2,12);
+      next_1=new JButton("返回");
+      rs=new JLabel("当前您的账户余额为："+c.getMoney());
+      Box bv=Box.createVerticalBox();
+      bv.add(rs);
+      bv.add(Box.createVerticalStrut(15));
+      bv.add(next_1);
+      JPanel p=new JPanel();
+      p.add(bv);
+      f_inquery.add(p);
+      f_inquery.setLayout(null);
+      p.setBounds(5, 55, 360, 200);
+      f_inquery.setBounds(430,200,360,300);
       f_inquery.setVisible(true);
       f_inquery.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       next_1.addActionListener(this);
-      next_1.setEnabled(true);
 
       now=f_inquery;
    }
@@ -770,7 +815,7 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
 //--------------------------------------以下为事件监听----------------------------------------//
 
    public void actionPerformed(ActionEvent e){    //按钮事件监听
-      if(e.getSource()==inquery)  act_inquery_money();
+      //if(e.getSource()==inquery)  act_inquery_money();
       if(e.getSource()==find) act_find_user();
       if(e.getSource()==u_find) act_reset_password();
       if(e.getSource()==to_rp) act_rel_rpassword();
@@ -801,7 +846,6 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       if(e.getSource()==u6) frame_switch_to_apdelect();
       if(e.getSource()==afdel) re_apdelect();
       if(e.getSource()==exit_1) System.exit(0);
-//      if(e.getSource()==exit_1) input_sql();
    }
 
 //------------------------------------------以下为事件实现-------------------------------------//
@@ -1005,56 +1049,58 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
    public void act_modify(){  //修改信息实现  //没有考虑输入不符合格式的情况
       System.out.println("正在修改信息中...");
       try {
-         String name=c.getName();
-         m_name.setText(name);
-         String pass=c.getPassword();
-         m_pass.setText(pass);
-         String tel=c.getTel();
-         m_tel.setText(tel);
-         String gender=String.valueOf(c.getGender());
-         m_gender.setText(gender);
-         String birth=c.getBirth().toString();
-         m_birth.setText(birth);
-
          out.writeUTF("execute");
          String sql="update users set name ='"+m_name.getText()+"' where bank_ID="+c.getBank_ID()+";";
-         if(!m_name.getText().equals(name)){
+         if(!m_name.getText().equals(c.getName())){
             sql="update users set name ='"+m_name.getText()+"' where bank_ID="+c.getBank_ID()+";";
             out.writeUTF(sql);
+            c.setName(m_name.getText());
+            JOptionPane.showMessageDialog(null, "姓名修改成功","提示",2);
          }
-         if(!m_pass.getText().equals(pass)){
+         if(!m_pass.getText().equals(c.getPassword())){
             sql="update users set password ='"+m_pass.getText()+"' where bank_ID="+c.getBank_ID()+";";
             out.writeUTF(sql);
+            c.setPassword(m_pass.getText());
+            JOptionPane.showMessageDialog(null, "密码修改成功","提示",2);
          }
-         if(!m_tel.getText().equals(tel)){
+         if(!m_tel.getText().equals(c.getTel())){
             sql="update users set tel ='"+m_tel.getText()+"' where bank_ID="+c.getBank_ID()+";";
             out.writeUTF(sql);
+            c.setTel(m_tel.getText());
+            JOptionPane.showMessageDialog(null, "电话号码修改成功","提示",2);
          }
-         if(!m_gender.getText().equals(gender)){
+         if(!m_gender.getText().equals(String.valueOf(c.getGender()))){
             sql="update users set gender ='"+m_gender.getText()+"' where bank_ID="+c.getBank_ID()+";";
             out.writeUTF(sql);
+            c.setGender(m_gender.getText().charAt(0));
+            JOptionPane.showMessageDialog(null, "性别修改成功","提示",2);
          }
-         if(!m_birth.getText().equals(birth)){
+         if(!m_birth.getText().equals(c.getBirth())){
             sql="update users set birth ='"+m_birth.getText()+"' where bank_ID="+c.getBank_ID()+";";
             out.writeUTF(sql);
+            c.setBirth(m_birth.getText());
+            JOptionPane.showMessageDialog(null, "出生日期修改成功","提示",2);
          }
+
       } catch (IOException e) {
          e.printStackTrace();
       }
    }
 
-   public void act_takemoney(){  //取款实现（待完成）  //取款考虑是否足够
+   public void act_takemoney(){  //取款实现
       System.out.println("正在取款中...");
-      System.out.println("此时的用户为： 用户名为"+c.getName()+",密码为"+c.getPassword()+"的用户"+c.getMoney()+Double.parseDouble(t_take.getText()));
       try{
-         c.setMoney(c.getMoney()-Double.parseDouble(t_take.getText()));
-         System.out.println("已完成取款.此时的用户余额为"+c.getMoney());
-         out.writeUTF("execute");
-         String sql="update users set money = "+c.getMoney()+" where bank_ID="+c.getBank_ID()+";";
-         out.writeUTF(sql);
-         System.out.println("已完成写入数据库"+c.getMoney());
-         now.setVisible(false);
-         frame_inquery();
+         if(!c.setMoney(c.getMoney()-Double.parseDouble(t_take.getText()))){
+            JOptionPane.showMessageDialog(null, "取款失败，您的账户余额不足！\n当前账户余额为："+c.getMoney(),"提示",0);
+            frame_switch_to_takemoney();
+         }
+         else{
+            out.writeUTF("execute");
+            String sql="update users set money = "+c.getMoney()+" where bank_ID="+c.getBank_ID()+";";
+            out.writeUTF(sql);
+            JOptionPane.showMessageDialog(null, "取款成功，当前您的账户余额为："+c.getMoney(),"提示",2);
+            frame_switch_to_function();
+         }
       }
       catch(IOException ex){
          ex.printStackTrace();
@@ -1069,7 +1115,9 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
         out.writeUTF("execute");
         String sql="update users set money = "+c.getMoney()+" where bank_ID="+c.getBank_ID()+";";
         out.writeUTF(sql);
-      }
+        JOptionPane.showMessageDialog(null, "存款成功，当前您的账户余额为："+c.getMoney(),"提示",2);
+        frame_switch_to_function();
+       }
       catch(IOException ex){
         ex.printStackTrace();
       }
@@ -1082,11 +1130,10 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       }
       else{
          try{
-            out.writeUTF("query");
+            out.writeUTF("count");
             String sql="select count(*) from users where bank_ID="+s.getBank_ID()+";";
             out.writeUTF(sql);
-            
-            int count=Integer.parseInt(in.readUTF());
+            int count=in.readInt();
             if(count==0) JOptionPane.showMessageDialog(null, "不存在该用户！\n请重新输入","提示",JOptionPane.ERROR_MESSAGE); 
             else{
                //s.setBank_ID(t_bankid.getText());
@@ -1110,18 +1157,20 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
                vb.add(message1);
                vb.add(Box.createVerticalStrut(10));
                vb.add(new JLabel("请在确认正确后进行转账"));
+               Box HBox=Box.createHorizontalBox();
+               HBox.add(yes);
+               HBox.add(Box.createHorizontalStrut(5));
+               HBox.add(next_1);
                //message.setVisible(true);
                JPanel p=new JPanel();
                p.add(vb);
                next_1.setText("取消");
-               p.add(next_1);
-               p.add(yes);
+               p.add(HBox);
                f_1.add(p);
                p.setBounds(0, 40, 300, 100);
                yes.addActionListener(this);
                next_1.addActionListener(this);
-               next_1.setEnabled(true);
-               f_1.setBounds(100,100,300,200);
+               f_1.setBounds(430,200,360,200);
                f_1.setVisible(true);
                f_1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -1138,24 +1187,26 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
    public void real_transfer(){  
        try {
          Double money=Double.parseDouble(t_money.getText());
-         s.setMoney(s.getMoney()+money);
-         out.writeUTF("execute");
-         String sql="update users set money = "+s.getMoney()+" where bank_ID="+s.getBank_ID()+";";
-         out.writeUTF(sql);
+         if(!c.setMoney(c.getMoney()-money)){
+            JOptionPane.showMessageDialog(null, "取款失败，您的账户余额不足！\n当前账户余额为："+c.getMoney(),"提示",0);
+            frame_switch_to_transfer();
+         }
+         else{
+            s.setMoney(s.getMoney()+money);
+            out.writeUTF("execute");
+            String sql="update users set money = "+s.getMoney()+" where bank_ID="+s.getBank_ID()+";";
+            out.writeUTF(sql);
 
-         c.setMoney(c.getMoney()-money);
-         out.writeUTF("execute");
-         sql="update users set money = "+c.getMoney()+" where bank_ID="+c.getBank_ID()+";";  //这里最好用bank_ID查询（需优化）
-         out.writeUTF(sql);
+            out.writeUTF("execute");
+            sql="update users set money = "+c.getMoney()+" where bank_ID="+c.getBank_ID()+";"; 
+            out.writeUTF(sql);
+            JOptionPane.showMessageDialog(null, "转账成功，当前您的账户余额为："+c.getMoney(),"提示",2);
+         }
        } catch (IOException e) {
          e.printStackTrace();
        }
-   }
- 
-   public void act_inquery_money(){   //查询实现
-      System.out.println("正在查询中...");
-         rs.setText("余额为:"+c.getMoney());
-         System.out.println("余额为:"+c.getMoney());
+       f_transfer.setVisible(false);
+       frame_switch_to_function();
    }
 
    public void re_apdelect() {   //确认并完成申请销户实现
@@ -1179,20 +1230,6 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
 
       now=f_1;
    }
-
-   // public void input_sql() {   // 把所有信息重写入数据库并退出（目前只写了money）
-   //    try {
-   //       Double money=Double.parseDouble(t_money.getText());
-   //       System.out.println("最终余额为："+c.getMoney());
-   //       out.writeUTF("execute");
-   //       String sql="update users set money = "+c.getMoney()+" where name='"+c.getName()+"';";
-   //       out.writeUTF(sql);
-   //       System.out.println("写入完成数据库");
-   //    } catch (IOException e) {
-   //       e.printStackTrace();
-   //    }
-   //    System.exit(0);
-   // }
 
 //--------------------------------------以下为界面转换实现(整体待优化)----------------------------//
  //代码相似度高，最好能修改后实现代码复用，减少方法的数量

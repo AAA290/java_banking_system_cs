@@ -29,6 +29,7 @@ public class ServerThread extends Thread{   //用于服务端与数据库传输�
          String s_command=in.readUTF();
          String s_sql=in.readUTF();
          if(s_command.equals("query")) out.writeUTF(database.db_query(s_sql));
+         if(s_command.equals("count")) out.writeInt(database.db_count(s_sql));
          if(s_command.equals("execute")) out.writeUTF(database.db_execute(s_sql));
          if(s_command.equals("query_m"))
             for(int i=0;i<=7;i++) out.writeUTF(database.db_query_m(s_sql)[i]);

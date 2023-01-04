@@ -57,6 +57,23 @@ public class db{     //用于数据库相关操作的类
       return res;
     }
 
+    public synchronized int db_count(String sql){  //mysql执行sql语句后，返回一个值，格式为String
+      try{
+        ResultSet rs=state.executeQuery(sql);
+        //while(rs.next()) res = rs.getString(col);
+        rs.next();
+        return rs.getInt(1);
+      }
+      catch(SQLException ex){
+        System.out.println("SQLException :"+ex.getMessage());
+        return 0;
+      }
+      catch(Exception e){
+        System.out.println("Exception :"+e.getMessage());
+        return 0;
+      }
+    }
+
     public synchronized String[] db_query_m(String sql){  //mysql执行sql语句后，返回一个值，格式为String[]
       String[] res=new String[8];
       try{  

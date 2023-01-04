@@ -30,7 +30,6 @@ public class client {
             return true;
         }
         else{
-            this.bank_ID = " ";
             return false;
         }
     }
@@ -40,7 +39,6 @@ public class client {
     }
     public boolean setName(String name) {  //不超过10个汉字字符
         if(name.length()>10){
-            this.name="name";
             return false;
         }
         else{
@@ -54,7 +52,6 @@ public class client {
     }
     public boolean setPassword(String password) {    //不少于四位
         if(password.length()<4){
-            this.password="password";
             return false;
         }
         else{
@@ -72,7 +69,6 @@ public class client {
             return true;
         }
         else{
-            //this.identify_ID = " ";
             return false;
         }
     }
@@ -86,7 +82,6 @@ public class client {
             return true;
         }
         else {
-            this.tel = "11234567890";
             return false;   
         }
     }
@@ -98,8 +93,10 @@ public class client {
         this.gender = gender;
     }
 
-    public Date getBirth() {
-        return birth;
+    public String getBirth() {
+        String pattern = "yyyy-MM-dd";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        return simpleDateFormat.format(birth);
     }
     public Boolean setBirth(String sbirth) {
         SimpleDateFormat sdf=new SimpleDateFormat("YYYY-MM-dd");
@@ -115,5 +112,11 @@ public class client {
     public Double getMoney() {
         return money;
     }
-    public void setMoney(Double money) {this.money = money;}
+    public Boolean setMoney(Double money) {
+        if(money>=0){
+           this.money = money;
+           return true;
+        }
+        else return false;
+    }
 }
