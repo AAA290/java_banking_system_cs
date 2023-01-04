@@ -2,7 +2,9 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.net.*;
+import java.util.Date;
 import java.io.*;
+import java.text.SimpleDateFormat;
 
 import com.itextpdf.text.*;
 import com.itextpdf.text.Font;
@@ -881,7 +883,7 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       if(e.getSource()==readin) act_excelreadin();
       if(e.getSource()==back_1) frame_switch_to_login();
       if(e.getSource()==next_1) frame_switch_to_function();
-      if(e.getSource()==e1) act_register();
+      if(e.getSource()==e1) act_register(f2.getText(),new String(f3.getPassword()),f4.getText(),f5.getText(),f6.getText(),f7.getText());
       if(e.getSource()==m1) frame_switch_to_modify();
       if(e.getSource()==m2) frame_switch_to_register();
       if(e.getSource()==m3) frame_switch_to_delete();
@@ -958,15 +960,16 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       }
    }
 
-   public void act_register(){   //注册实现
+    //注册实现
+   public void act_register(String sname,String spassword,String sshenfen,String stel,String ssex,String sbirth){  
       System.out.println("正在注册...");
       //String sid = f1.getText();
-      String sname = f2.getText();
-      String spassword =new String(f3.getPassword());
-		String sshenfen = f4.getText();
-      String stel = f5.getText();
-      String ssex = f6.getText();
-      String sbirth = f7.getText();
+      // String sname = f2.getText();
+      // String spassword =new String(f3.getPassword());
+		// String sshenfen = f4.getText();
+      // String stel = f5.getText();
+      // String ssex = f6.getText();
+      // String sbirth = f7.getText();
 	//	String  money = f8.getText();
       //  if(!c.setBank_ID(sid)){
       //       JOptionPane.showMessageDialog(null, "银行卡号输入格式错误！","提示",JOptionPane.ERROR_MESSAGE);       
@@ -1282,8 +1285,10 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
          d.add(new Paragraph(" "));
          out.writeUTF("count");
          out.writeUTF("select count(*) from users;");
-         d.add(new Paragraph("目前飞马银行中的账户总数："+in.readInt(),font));
-         d.add(new Paragraph("今年在飞马银行开户的新客户总数：",font));
+         int num=in.readInt();
+         d.add(new Paragraph("目前飞马银行中的账户总数："+(num-1),font));  //减去管理员
+         out.writeUTF("last_year_num");
+         d.add(new Paragraph("今年在飞马银行开户的新客户总数："+(num-1-in.readInt()),font));
          out.writeUTF("query");
          out.writeUTF("select sum(money) from users;");
          d.add(new Paragraph("目前飞马银行总存储金额："+Double.parseDouble(in.readUTF()),font));
@@ -1309,12 +1314,16 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
                for(int s = 0;s<xssfWb.getNumberOfSheets();s++) {
                   XSSFSheet sheet = xssfWb.getSheetAt(s);
                   int rownum = sheet.getLastRowNum();
-                  for (int r = 1; r <= rownum; r++) {     //第0行为标题行，不读取
-                     int cellnum = sheet.getRow(r).getLastCellNum();
-                     for (int c = 0; c < cellnum; c++){
-                           System.out.print(sheet.getRow(r).getCell(c) + "  ");
-                     }
-                     System.out.println();
+                  for (int r = 1; r <=rownum; r++) {     //第0行为标题行，不读取
+                     Date date = sheet.getRow(r).getCell(5).getDateCellValue();
+                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                     String birth = sdf.format(date);
+                     act_register(sheet.getRow(r).getCell(0).getStringCellValue(),
+                        sheet.getRow(r).getCell(1).getStringCellValue(),
+                        sheet.getRow(r).getCell(2).getStringCellValue(),
+                        sheet.getRow(r).getCell(3).getStringCellValue(),
+                        sheet.getRow(r).getCell(4).getStringCellValue(),
+                        birth);
                   }
                }
             } catch (IOException e) {
@@ -1329,11 +1338,15 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
                   HSSFSheet sheet = hssfWb.getSheetAt(s);
                   int rownum = sheet.getLastRowNum();
                   for (int r = 1; r <= rownum; r++) {     //第0行为标题行，不读取
-                     int cellnum = sheet.getRow(r).getLastCellNum();
-                     for (int c = 0; c < cellnum; c++){
-                           System.out.print(sheet.getRow(r).getCell(c) + "  ");
-                     }
-                     System.out.println();
+                     Date date = sheet.getRow(r).getCell(5).getDateCellValue();
+                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                     String birth = sdf.format(date);
+                     act_register(sheet.getRow(r).getCell(0).getStringCellValue(),
+                        sheet.getRow(r).getCell(1).getStringCellValue(),
+                        sheet.getRow(r).getCell(2).getStringCellValue(),
+                        sheet.getRow(r).getCell(3).getStringCellValue(),
+                        sheet.getRow(r).getCell(4).getStringCellValue(),
+                        birth);
                   }
                }
            } catch (IOException e) {
@@ -1341,7 +1354,6 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
                e.printStackTrace();
            }
          }
-         JOptionPane.showMessageDialog(null, "批量开户成功","提示",2);
          frame_switch_to_function_manager();
       }
    }

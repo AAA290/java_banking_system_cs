@@ -33,6 +33,7 @@ public class ServerThread extends Thread{   //用于服务端与数据库传输�
          if(s_command.equals("execute")) out.writeUTF(database.db_execute(s_sql));
          if(s_command.equals("query_m"))
             for(int i=0;i<=7;i++) out.writeUTF(database.db_query_m(s_sql)[i]);
+         if(s_command.equals("last_year_num")) out.writeInt(4);     //输出去年飞马银行的账户人数
        }
        catch(IOException e){
           System.out.println("客户离开");
