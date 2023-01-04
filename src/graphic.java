@@ -4,6 +4,17 @@ import javax.swing.*;
 import java.net.*;
 import java.io.*;
 
+import com.itextpdf.text.*;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfWriter;
+
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+
 public class graphic implements ActionListener{  //整个客户端页面的构造与实现的类
    //private actions ac;
    //Socket socket; 
@@ -36,6 +47,11 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
    //管理员的功能选择界面（待完成）
    JFrame f_manager;
    JButton m1,m2,m3,m4,m5,m6;
+
+   //管理员excel批量开户界面
+   JFrame f_excelreadin;
+   JTextField filepath;
+   JButton readin;
 
    //管理员销户界面（待完成）
    JFrame f_closing;
@@ -327,6 +343,40 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
 
       now=f_manager;
    }
+
+  public void frame_excelreadin(){
+      f_excelreadin=new JFrame("批量开户");
+      filepath=new JTextField();
+      filepath.setPreferredSize(new Dimension(100,30));
+      readin=new JButton("确定");
+      next_1=new JButton("返回");
+      
+      Box HB=Box.createHorizontalBox();
+      HB.add(new JLabel("excel文件路径"));
+      HB.add(Box.createHorizontalStrut(15));
+      HB.add(filepath);
+      Box HB1=Box.createHorizontalBox();
+      HB1.add(readin);
+      HB1.add(Box.createHorizontalStrut(15));
+      HB1.add(next_1);
+      Box bv=Box.createVerticalBox();
+      bv.add(Box.createVerticalStrut(15));
+      bv.add(HB);
+      bv.add(Box.createVerticalStrut(20));
+      bv.add(HB1);
+      JPanel p=new JPanel();
+      p.add(bv);
+      f_excelreadin.add(p);
+      f_excelreadin.setLayout(null);
+      p.setBounds(5, 55, 360, 200);
+      f_excelreadin.setBounds(430,200,360,300);
+      f_excelreadin.setVisible(true);
+      f_excelreadin.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      readin.addActionListener(this);
+      next_1.addActionListener(this);
+
+      now=f_excelreadin;
+  }
 
    public void frame_delete_manager(){   //管理员销户界面
       f_closing = new JFrame("管理员销户");
@@ -649,7 +699,7 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       now=f_modify;
    }
 
-   public void frame_takemoney(){  //取款界面（待完成）
+   public void frame_takemoney(){  //取款界面
       f_takemoney=new JFrame("取款");
       take=new JButton("确认");
       next_1=new JButton("返回");
@@ -828,15 +878,16 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       if(e.getSource()==modify) act_modify();
       if(e.getSource()==transfer) act_transfer();
       if(e.getSource()==yes) real_transfer();
+      if(e.getSource()==readin) act_excelreadin();
       if(e.getSource()==back_1) frame_switch_to_login();
       if(e.getSource()==next_1) frame_switch_to_function();
       if(e.getSource()==e1) act_register();
       if(e.getSource()==m1) frame_switch_to_modify();
       if(e.getSource()==m2) frame_switch_to_register();
       if(e.getSource()==m3) frame_switch_to_delete();
-      if(e.getSource()==m4) act_function_manager();
+      if(e.getSource()==m4) frame_switch_to_excelreadin();
       if(e.getSource()==m5) act_function_manager();
-      if(e.getSource()==m6) act_function_manager();
+      if(e.getSource()==m6) act_generatepdf();
       if(e.getSource()==c1) act_delete_manager();
       if(e.getSource()==u1) frame_switch_to_modify();
       if(e.getSource()==u2) frame_switch_to_inquery();
@@ -856,14 +907,14 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       String s_bankid=bankid.getText(),
               s_password=new String(password.getPassword());
       if(!c.setBank_ID(s_bankid)){
-         JOptionPane.showMessageDialog(null, "银行账号格式错误\n请重新输入","提示",JOptionPane.ERROR_MESSAGE);
+         JOptionPane.showMessageDialog(null, "银行账号格式错误\n请重新输入","警告",JOptionPane.ERROR_MESSAGE);
       }
       if(!c.setPassword(s_password)){
-         JOptionPane.showMessageDialog(null, "密码格式错误，密码不得少于4位！\n请重新输入","提示",JOptionPane.ERROR_MESSAGE);
+         JOptionPane.showMessageDialog(null, "密码格式错误，密码不得少于4位！\n请重新输入","警告",JOptionPane.ERROR_MESSAGE);
       }
       if(c.setBank_ID(s_bankid)&&c.setPassword(s_password)){
          try{
-            out.writeUTF("query");
+            out.writeUTF("count");
             String sql="select count(*) from users where bank_ID='"+s_bankid+"' and password='"+s_password+"';";
             out.writeUTF(sql);
          }
@@ -871,14 +922,13 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
             ex.printStackTrace();
          }
          try{
-            int count=Integer.parseInt(in.readUTF());
+            int count=in.readInt();
             if(count!=0) {
                if(!c.getBank_ID().equals("1000000000")){  //客户登录
                   System.out.println("客户"+c.getBank_ID()+"登录成功");
-                  now.setVisible(false);
 
-                  out.writeUTF("query_m");
-                  out.writeUTF("select * from users where bank_ID="+c.getBank_ID()+";");  //后续改进后记得改成用bank_ID查找，因为名字可能重名，但是Bank_ID是唯一的
+                  out.writeUTF("query_m");  //登录时把所有数据存入c中
+                  out.writeUTF("select * from users where bank_ID="+c.getBank_ID()+";");  
                   in.readUTF();
                   c.setName(in.readUTF());
                   in.readUTF();
@@ -889,31 +939,17 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
                   c.setMoney(Double.parseDouble(in.readUTF()));
                   c.setXiaohu(true);
 
-                  JFrame f_1=new JFrame("客户登录成功");
-                  f_1.setLayout(null);
-                  JLabel message=new JLabel();
-                  message.setText("客户"+c.getBank_ID()+",您已成功登录，欢迎使用飞马银行系统！");
-                  message.setVisible(true);
-                  JPanel p=new JPanel();
-                  p.add(message);
-                  p.add(next_1);
-                  f_1.add(p);
-                  p.setBounds(0, 40, 300, 100);
-                  next_1.addActionListener(this);
-                  next_1.setEnabled(true);
-                  f_1.setBounds(500,250,300,200);
-                  f_1.setVisible(true);
-                  f_1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-                  now=f_1;
+                  JOptionPane.showMessageDialog(null, "客户"+c.getBank_ID()+",您已成功登录！\n欢迎使用飞马银行系统！","提示",2); 
+                  frame_switch_to_function();
                }
                else{  //管理员登录
                   System.out.println("管理员登录成功");
+                  JOptionPane.showMessageDialog(null, "管理员，欢迎登录！","提示",2); 
                   frame_switch_to_function_manager();
                }
             }
             else{
-               JOptionPane.showMessageDialog(null, "不存在该用户或账号密码不一致！\n请重新输入","提示",JOptionPane.ERROR_MESSAGE);
+               JOptionPane.showMessageDialog(null, "不存在该用户或账号密码不一致！\n请重新输入","警告",JOptionPane.ERROR_MESSAGE);
             }
          }
          catch(IOException ee){
@@ -1231,6 +1267,86 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       now=f_1;
    }
 
+   public void act_generatepdf(){  //生成pdf报表
+     try {
+         BaseFont bfComic = BaseFont.createFont("c://windows//fonts//SIMHEI.TTF", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+         Font font = new Font(bfComic,14);
+         Font tfont = new Font(bfComic,25);
+         Document d=new Document();
+         String filename=".\\报表.pdf";
+         PdfWriter.getInstance(d, new FileOutputStream(filename));
+         d.open();
+         Paragraph title=new Paragraph("飞马银行年度报表",tfont);
+         title.setAlignment(Element.ALIGN_CENTER);
+         d.add(title);
+         d.add(new Paragraph(" "));
+         out.writeUTF("count");
+         out.writeUTF("select count(*) from users;");
+         d.add(new Paragraph("目前飞马银行中的账户总数："+in.readInt(),font));
+         d.add(new Paragraph("今年在飞马银行开户的新客户总数：",font));
+         out.writeUTF("query");
+         out.writeUTF("select sum(money) from users;");
+         d.add(new Paragraph("目前飞马银行总存储金额："+Double.parseDouble(in.readUTF()),font));
+         d.close();
+         JOptionPane.showMessageDialog(null, "报表生成成功！","提示",2);
+     } catch (IOException e) {
+         System.out.println("IOException: ");
+         e.printStackTrace();
+     } 
+     catch (DocumentException e){
+         System.out.println("DocumentException: ");
+         e.printStackTrace();
+     }
+   }
+
+   public void act_excelreadin(){  //根据excel文件批量开户
+      String filename=filepath.getText();
+      if(!new File(filename).exists()) JOptionPane.showMessageDialog(null, "该文件不存在！","警告",0);
+      else{
+         if(filename.endsWith(".xlsx")){  //判断文件类型是不是.xlsx文件
+            try {
+               XSSFWorkbook xssfWb = new XSSFWorkbook(new FileInputStream(filename));
+               for(int s = 0;s<xssfWb.getNumberOfSheets();s++) {
+                  XSSFSheet sheet = xssfWb.getSheetAt(s);
+                  int rownum = sheet.getLastRowNum();
+                  for (int r = 1; r <= rownum; r++) {     //第0行为标题行，不读取
+                     int cellnum = sheet.getRow(r).getLastCellNum();
+                     for (int c = 0; c < cellnum; c++){
+                           System.out.print(sheet.getRow(r).getCell(c) + "  ");
+                     }
+                     System.out.println();
+                  }
+               }
+            } catch (IOException e) {
+               System.out.println("IOException：");
+               e.printStackTrace();
+            }
+         }
+         else{  //是.xls文件
+            try {
+               HSSFWorkbook hssfWb = new HSSFWorkbook(new FileInputStream(filename));
+               for(int s = 0;s<hssfWb.getNumberOfSheets();s++) {
+                  HSSFSheet sheet = hssfWb.getSheetAt(s);
+                  int rownum = sheet.getLastRowNum();
+                  for (int r = 1; r <= rownum; r++) {     //第0行为标题行，不读取
+                     int cellnum = sheet.getRow(r).getLastCellNum();
+                     for (int c = 0; c < cellnum; c++){
+                           System.out.print(sheet.getRow(r).getCell(c) + "  ");
+                     }
+                     System.out.println();
+                  }
+               }
+           } catch (IOException e) {
+               System.out.println("IOException：");
+               e.printStackTrace();
+           }
+         }
+         JOptionPane.showMessageDialog(null, "批量开户成功","提示",2);
+         frame_switch_to_function_manager();
+      }
+   }
+
+
 //--------------------------------------以下为界面转换实现(整体待优化)----------------------------//
  //代码相似度高，最好能修改后实现代码复用，减少方法的数量
 
@@ -1282,11 +1398,17 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       frame_modify();
    }
 
-   //转到管理员找回密码界面(待完成)
+   //转到管理员找回密码界面
    public void frame_switch_to_findpass(){
       now.setVisible(false);
       frame_findpass_manager();
    }
+
+   //转到管理员excel文件批量开户界面
+   public void frame_switch_to_excelreadin(){
+      now.setVisible(false);
+      frame_excelreadin();
+   } 
 
    //转到管理员销户界面(待完成)
    public void frame_switch_to_delete(){
