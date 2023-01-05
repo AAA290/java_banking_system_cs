@@ -2,15 +2,19 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.net.*;
+import java.util.Calendar;
 import java.util.Date;
 import java.io.*;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
+//pdf
 import com.itextpdf.text.*;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfWriter;
 
+//excel
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -19,47 +23,36 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class graphic implements ActionListener{  //整个客户端页面的构造与实现的类
    //private actions ac;
-   //Socket socket; 
    private DataInputStream in;
    private DataOutputStream out;
    private client c,s;    //客户对象，存储/修改客户信息
 
    JFrame now;  //记录当前所在界面
 
-   //查询界面
-   JFrame f_inquery;
-   //JButton inquery;  
-   JLabel rs;
-   //JTextArea rs;
+   //查询界面(已完成)
+   JFrame f_inquery; 
 
-   //登录界面
+   //登录界面(已完成)
    JFrame f_login;
    JButton login,register,find;
-   //JTextField user;  //建议还是使用bank_ID登录，而不是姓名
    JTextField bankid;
    JPasswordField password;  //密码框
 
-   //注册界面（待完成）
+   //注册界面(已完成)
    JFrame f_enroll;
    JButton e1;
-   //JTextField f1,f2,f4,f5,f6,f7,f8;
-   JTextField f1,f2,f4,f5,f6,f7;
+   JRadioButton JR1,JR2;
+   JTextField f1,f2,f4,f5,f7;
    JPasswordField f3;
     
-   //管理员的功能选择界面（待完成）
+   //管理员的功能选择界面//
    JFrame f_manager;
    JButton m1,m2,m3,m4,m5,m6;
 
-   //管理员excel批量开户界面
+   //管理员excel批量开户界面(已完成)
    JFrame f_excelreadin;
    JTextField filepath;
    JButton readin;
-
-   //管理员销户界面（待完成）
-   JFrame f_closing;
-   JButton c1;
-   JTextField d1;
-   JPasswordField d2;
 
    //管理员找回密码界面（待完成）
    JFrame f_findpass_manager;
@@ -82,28 +75,30 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
    JFrame f_user;
    JButton u1,u2,u3,u4,u5,u6;
 
-   //修改信息界面
+   //修改信息界面(已完成)
    JFrame f_modify;
    JButton modify;
-   JTextField m_name,m_pass,m_tel,m_gender,m_birth;
+   JRadioButton F,M;
+   JTextField m_name,m_pass,m_tel,m_birth;
 
-   //取款界面（待完成）
+   //取款界面(已完成)
    JFrame f_takemoney;
    JButton take;
    JTextField t_take;
 
-   //存款界面
+   //存款界面(已完成)
    JFrame f_putmoney;
    JButton save;
    JTextField t_save;
 
-   //转账界面
+   //转账界面(已完成)
    JFrame f_transfer;
    JButton transfer,yes;
    JTextField t_bankid,t_money;
 
    //提交销户申请的按钮
    JButton afdel;
+
    //返回按钮
    JButton back_1;  //返回登录界面（新建的登录界面，相当于重新开始一个客户的操作）
 
@@ -141,9 +136,9 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       f_login=new JFrame("登录");
       JPanel p=new JPanel();
       bankid=new JTextField();
-      bankid.setPreferredSize(new Dimension(200,30));
+      bankid.setPreferredSize(new Dimension(150,30));
       password=new JPasswordField();
-      password.setPreferredSize(new Dimension(200,30));
+      password.setPreferredSize(new Dimension(150,30));
       JLabel l1=new JLabel("账号");
       l1.setPreferredSize(new Dimension(50,30));
       JLabel l2=new JLabel("密码");
@@ -153,8 +148,6 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       login=new JButton("登录");
       register=new JButton("注册");
       next_1=new JButton("下一步");
-      //info=new JLabel("正在登录..."); 
-      //info.setVisible(false); 
       Box  boxV1=Box.createVerticalBox();
       boxV1.add(l1);
       boxV1.add(Box.createVerticalStrut(15));
@@ -177,8 +170,6 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       boxV3.add(baseBox);
       boxV3.add(Box.createVerticalStrut(15));
       boxV3.add(HBox3);
-      //boxV3.add(Box.createVerticalStrut(3));
-      //boxV3.add(info);
       p.add(boxV3);
       f_login.add(p);
       f_login.setLayout(null);
@@ -195,28 +186,26 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
 
    public void frame_register(){   //注册界面
       f_enroll = new JFrame("注册");
-      JPanel jd=new JPanel();
-      f1 = new JTextField("Silver card number"); 
-      f2 = new JTextField("name");
-      f3 = new JPasswordField("password");
-      f4 = new JTextField("identify_id");
-      f5 = new JTextField("phone");
-      f6 = new JTextField("sex");
-      f7 = new JTextField("birthday");
-      //f8 = new JTextField("money");
-   
-      f1.setPreferredSize(new Dimension(200,30));
+      JPanel jd=new JPanel(); 
+      f2 = new JTextField();
+      f3 = new JPasswordField();
+      f4 = new JTextField();
+      f5 = new JTextField();
+      f7 = new JTextField();
+      ButtonGroup JR=new ButtonGroup();
+      JR1=new JRadioButton("女");
+      JR2=new JRadioButton("男");
+      JR1.setSelected(true);
+      JR.add(JR1);
+      JR.add(JR2);
+
       f2.setPreferredSize(new Dimension(200,30));
       f3.setPreferredSize(new Dimension(200,30));
       f4.setPreferredSize(new Dimension(200,30));
       f5.setPreferredSize(new Dimension(200,30));
-      f6.setPreferredSize(new Dimension(200,30));
       f7.setPreferredSize(new Dimension(200,30));
-      //f8.setPreferredSize(new Dimension(200,30));
       f3.setEchoChar('*');    //用*遮掩密码
 
-      // JLabel j1=new JLabel("银行卡号");
-      // j1.setPreferredSize(new Dimension(60,30));
       JLabel j2=new JLabel("姓名");
       j2.setPreferredSize(new Dimension(60,30));
       JLabel j3=new JLabel("密码");
@@ -229,17 +218,9 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       j6.setPreferredSize(new Dimension(60,30));
       JLabel j7=new JLabel("生日");
       j7.setPreferredSize(new Dimension(60,30));
-      // JLabel j8=new JLabel("存钱");
-      // j8.setPreferredSize(new Dimension(60,30));
 
-      //JLabel a=new JLabel("1",5);
       e1=new JButton("完成");
       back_1=new JButton("取消");
-      Box a1 = Box.createHorizontalBox();
-      a1.add(new JLabel("银行卡号",SwingConstants.CENTER));  //可以考虑使用匿名内部类，缩减代码
-      //(需要解决的问题：匿名内部类无法设置大小，可以考虑UIManager)
-      a1.add(Box.createHorizontalStrut(3));
-      a1.add(f1);
       Box a2 = Box.createHorizontalBox();
       a2.add(j2);
       a2.add(Box.createHorizontalStrut(3));
@@ -258,23 +239,19 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       a5.add(f5);
       Box a6 = Box.createHorizontalBox();
       a6.add(j6);
-      a6.add(Box.createHorizontalStrut(3));
-      a6.add(f6);
+      a6.add(Box.createHorizontalStrut(15));
+      a6.add(JR1);
+      a6.add(Box.createHorizontalStrut(8));
+      a6.add(JR2);
       Box a7 = Box.createHorizontalBox();
       a7.add(j7);
       a7.add(Box.createHorizontalStrut(3));
       a7.add(f7);
-      // Box a8 = Box.createHorizontalBox();
-      // a8.add(j8);
-      // a8.add(Box.createHorizontalStrut(3));
-      // a8.add(f8);
       Box b1 = Box.createHorizontalBox();
       b1.add(e1);
-      b1.add(Box.createHorizontalStrut(3));
+      b1.add(Box.createHorizontalStrut(20));
       b1.add(back_1);
       Box A = Box.createVerticalBox();
-      A.add(a1);
-      A.add(Box.createVerticalStrut(10));
       A.add(a2);
       A.add(Box.createVerticalStrut(10));
       A.add(a3);
@@ -283,11 +260,9 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       A.add(Box.createVerticalStrut(10));
       A.add(a5);
       A.add(Box.createVerticalStrut(10));
-      A.add(a6);
-      A.add(Box.createVerticalStrut(10));
       A.add(a7);
-      // A.add(Box.createVerticalStrut(10));
-      // A.add(a8);
+      A.add(Box.createVerticalStrut(10));
+      A.add(a6);
       A.add(Box.createVerticalStrut(10));
       A.add(b1);
 
@@ -297,7 +272,10 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       jd.setBounds(7, 55, 400, 500);
       e1.addActionListener(this);
       back_1.addActionListener(this);
-      f_enroll.setBounds(400,180,500,525);
+     
+      JR1.addActionListener(this);
+      JR2.addActionListener(this);
+      f_enroll.setBounds(400,180,450,450);
       f_enroll.setVisible(true);
       f_enroll.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -314,24 +292,39 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       m5 = new JButton("导出信息");
       m6 = new JButton("生成年报");
       back_1 = new JButton("退出");
-      Box M = Box.createVerticalBox();
-      M.add(m1);
-      M.add(Box.createVerticalStrut(10));
-      M.add(m2);
-      M.add(Box.createVerticalStrut(10));
-      M.add(m3);
-      M.add(Box.createVerticalStrut(10));
-      M.add(m4);
-      M.add(Box.createVerticalStrut(10));
-      M.add(m5);
-      M.add(Box.createVerticalStrut(10));
-      M.add(m6);
-      M.add(Box.createVerticalStrut(10));
-      M.add(back_1);
-      jm.add(M);
+      JLabel ml1=new JLabel("您已进入银行管理员页面");
+      JLabel ml2=new JLabel("请选择您要进行的业务");
+      ml1.setPreferredSize(new Dimension(150,70));
+      ml2.setPreferredSize(new Dimension(150,70));
+      Box M1 = Box.createVerticalBox();
+      M1.add(m1);
+      M1.add(Box.createVerticalStrut(20));
+      M1.add(m4);
+      M1.add(Box.createVerticalStrut(20));
+      M1.add(m5);
+      M1.add(Box.createVerticalStrut(20));
+      M1.add(m6);
+      M1.add(Box.createVerticalStrut(30));
+      Box M2 = Box.createVerticalBox();
+      M2.add(Box.createVerticalStrut(50));
+      M2.add(ml1);
+      M2.add(Box.createVerticalStrut(20));
+      M2.add(ml2);
+      Box M3 = Box.createVerticalBox();
+      M3.add(m2);
+      M3.add(Box.createVerticalStrut(20));
+      M3.add(m3);
+      M3.add(Box.createVerticalStrut(20));
+      M3.add(back_1);
+      M3.add(Box.createVerticalStrut(70));
+      jm.add(M1);
+      jm.add(Box.createHorizontalStrut(40));
+      jm.add(M2);
+      jm.add(Box.createHorizontalStrut(35));
+      jm.add(M3);
       f_manager.add(jm);
       f_manager.setLayout(null);
-      jm.setBounds(7, 55, 400, 500);
+      jm.setBounds(7, 35, 500, 300);
       m1.addActionListener(this);
       m2.addActionListener(this);
       m3.addActionListener(this);
@@ -339,11 +332,11 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       m5.addActionListener(this);
       m6.addActionListener(this);
       back_1.addActionListener(this);
-      f_manager.setBounds(400,180,500,525);
+      f_manager.setBounds(430,200,540,330);
       f_manager.setVisible(true);
       f_manager.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-      now=f_manager;
+      now = f_manager;
    }
 
   public void frame_excelreadin(){
@@ -379,53 +372,6 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
 
       now=f_excelreadin;
   }
-
-   public void frame_delete_manager(){   //管理员销户界面
-      f_closing = new JFrame("管理员销户");
-      JPanel jc = new JPanel();
-      d1 = new JTextField("name");
-      d2 = new JPasswordField("password");
-      d1.setPreferredSize(new Dimension(200,30));
-      d2.setPreferredSize(new Dimension(200,30));
-      d2.setEchoChar('*');
-      JLabel g1=new JLabel("姓名");
-      g1.setPreferredSize(new Dimension(60,30));
-      JLabel g2=new JLabel("密码");
-      g2.setPreferredSize(new Dimension(60,30));
-      c1 = new JButton("完成");
-      back_1 = new JButton("退出");
-      Box a1 = Box.createHorizontalBox();
-      a1.add(g1);
-      a1.add(Box.createHorizontalStrut(3));
-      a1.add(d1);
-      Box a2 = Box.createHorizontalBox();
-      a2.add(g2);
-      a2.add(Box.createHorizontalStrut(3));
-      a2.add(d2);
-      Box a3 = Box.createVerticalBox();
-      a3.add(a1);
-      a3.add(Box.createVerticalStrut(10));
-      a3.add(a2);
-      Box C = Box.createHorizontalBox();
-      C.add(c1);
-      C.add(Box.createHorizontalStrut(3));
-      C.add(back_1);
-      Box a4 = Box.createVerticalBox();
-      a4.add(a3);
-      a4.add(Box.createVerticalStrut(10));
-      a4.add(C);
-      jc.add(a4);
-      f_closing.add(jc);
-      f_closing.setLayout(null);
-      jc.setBounds(7, 55, 400, 500);
-      c1.addActionListener(this);
-      back_1.addActionListener(this);
-      f_closing.setBounds(400,180,500,525);
-      f_closing.setVisible(true);
-      f_closing.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-      now=f_closing;
-   }
 
    public void frame_findpass_manager(){   //管理员找回密码界面（待完成）
       f_findpass_manager=new JFrame("用户找回密码");
@@ -632,29 +578,35 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       f_modify=new JFrame("修改信息");
       modify=new JButton("确认修改");
       next_1=new JButton(" 返回 ");
-      
+
+      ButtonGroup JR=new ButtonGroup();
+      F=new JRadioButton("女");
+      M=new JRadioButton("男");
+      JR.add(F);
+      JR.add(M);
       m_name=new JTextField();
-      m_name.setPreferredSize(new Dimension(50, 10));
+      m_name.setPreferredSize(new Dimension(150, 30));
       m_tel=new JTextField();
-      m_tel.setPreferredSize(new Dimension(50, 10));
+      m_tel.setPreferredSize(new Dimension(150, 30));
       m_pass=new JTextField();
-      m_pass.setPreferredSize(new Dimension(50, 10));
+      m_pass.setPreferredSize(new Dimension(150, 30));
       m_birth=new JTextField();
-      m_birth.setPreferredSize(new Dimension(50, 10));
-      m_gender=new JTextField();
-      m_gender.setPreferredSize(new Dimension(50, 10));
+      m_birth.setPreferredSize(new Dimension(150, 30));
+      // m_gender=new JTextField();
+      // m_gender.setPreferredSize(new Dimension(50, 10));
       m_name.setText(c.getName());
       m_pass.setText(c.getPassword());
       m_tel.setText(c.getTel());
-      m_gender.setText(String.valueOf(c.getGender()));
+      if(c.getGender()=='F')  F.setSelected(true);
+      else M.setSelected(true);
       m_birth.setText(c.getBirth());
 
       Box bh1= Box.createHorizontalBox();
-      bh1.add(new JLabel("姓名  "));
+      bh1.add(new JLabel("姓名    "));
       bh1.add(Box.createHorizontalStrut(3));
       bh1.add(m_name);
       Box bh2= Box.createHorizontalBox();
-      bh2.add(new JLabel("密码  "));
+      bh2.add(new JLabel("密码    "));
       bh2.add(Box.createHorizontalStrut(3));
       bh2.add(m_pass);
       Box bh3= Box.createHorizontalBox();
@@ -662,9 +614,11 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       bh3.add(Box.createHorizontalStrut(3));
       bh3.add(m_tel);
       Box bh4= Box.createHorizontalBox();
-      bh4.add(new JLabel("性别  "));
-      bh4.add(Box.createHorizontalStrut(3));
-      bh4.add(m_gender);
+      bh4.add(new JLabel("性别    "));
+      bh4.add(Box.createHorizontalStrut(8));
+      bh4.add(F);
+      bh4.add(Box.createHorizontalStrut(20));
+      bh4.add(M);
       Box bh5= Box.createHorizontalBox();
       bh5.add(new JLabel("出生日期"));
       bh5.add(Box.createHorizontalStrut(3));
@@ -691,10 +645,10 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       p.add(bv);
       f_modify.add(p);
       f_modify.setLayout(null);
-      p.setBounds(2, 40, 360, 200);
+      p.setBounds(2, 40, 360, 400);
       modify.addActionListener(this);
       next_1.addActionListener(this);
-      f_modify.setBounds(430,200,360,300);
+      f_modify.setBounds(430,200,360,430);
       f_modify.setVisible(true);
       f_modify.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -735,7 +689,7 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       now=f_takemoney;
    }
 
-   public void frame_putmoney(){   //存款界面（待完成）
+   public void frame_putmoney(){   //存款界面
      f_putmoney=new JFrame("存款");
      save=new JButton("确认");
      next_1=new JButton("返回");
@@ -814,12 +768,15 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
    public void frame_inquery(){     //查询界面
       f_inquery=new JFrame("查询余额");
       f_inquery.setLocationRelativeTo(null);
-      //inquery=new JButton("查询账户余额");
-      //rs=new JTextArea(2,12);
       next_1=new JButton("返回");
-      rs=new JLabel("当前您的账户余额为："+c.getMoney());
+      JLabel rs1=new JLabel("当前您的账户余额为：");
+      JLabel rs2=new JLabel("    "+c.getMoney());
+      //rs1.setPreferredSize(new Dimension(150,30));
+
       Box bv=Box.createVerticalBox();
-      bv.add(rs);
+      bv.add(rs1);
+      bv.add(Box.createVerticalStrut(5));
+      bv.add(rs2);
       bv.add(Box.createVerticalStrut(15));
       bv.add(next_1);
       JPanel p=new JPanel();
@@ -827,7 +784,7 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       f_inquery.add(p);
       f_inquery.setLayout(null);
       p.setBounds(5, 55, 360, 200);
-      f_inquery.setBounds(430,200,360,300);
+      f_inquery.setBounds(430,200,350,250);
       f_inquery.setVisible(true);
       f_inquery.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       next_1.addActionListener(this);
@@ -877,20 +834,26 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       if(e.getSource()==register) frame_switch_to_register();
       if(e.getSource()==take) act_takemoney();
       if(e.getSource()==save) act_putmoney();
-      if(e.getSource()==modify) act_modify();
+      if(e.getSource()==modify) {
+         String gender=F.isSelected()?"F":"M";
+         act_modify(m_name.getText(),m_pass.getText(),m_tel.getText(),gender,m_birth.getText());
+      }
       if(e.getSource()==transfer) act_transfer();
       if(e.getSource()==yes) real_transfer();
       if(e.getSource()==readin) act_excelreadin();
       if(e.getSource()==back_1) frame_switch_to_login();
       if(e.getSource()==next_1) frame_switch_to_function();
-      if(e.getSource()==e1) act_register(f2.getText(),new String(f3.getPassword()),f4.getText(),f5.getText(),f6.getText(),f7.getText());
+      if(e.getSource()==e1) {
+         String ssex=JR1.isSelected()?"F":"M";
+         act_register(f2.getText(),new String(f3.getPassword()),f4.getText(),f5.getText(),ssex,f7.getText());
+      }
       if(e.getSource()==m1) frame_switch_to_modify();
       if(e.getSource()==m2) frame_switch_to_register();
-      if(e.getSource()==m3) frame_switch_to_delete();
+      if(e.getSource()==m3) act_delete_manager();
       if(e.getSource()==m4) frame_switch_to_excelreadin();
-      if(e.getSource()==m5) act_function_manager();
+      if(e.getSource()==m5) ;
       if(e.getSource()==m6) act_generatepdf();
-      if(e.getSource()==c1) act_delete_manager();
+     // if(e.getSource()==c1) act_delete_manager();
       if(e.getSource()==u1) frame_switch_to_modify();
       if(e.getSource()==u2) frame_switch_to_inquery();
       if(e.getSource()==u3) frame_switch_to_putmoney();
@@ -939,14 +902,14 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
                   c.setGender(in.readUTF().charAt(0));
                   c.setBirth(in.readUTF());
                   c.setMoney(Double.parseDouble(in.readUTF()));
-                  c.setXiaohu(true);
+                  //c.setXiaohu(true);
 
-                  JOptionPane.showMessageDialog(null, "客户"+c.getBank_ID()+",您已成功登录！\n欢迎使用飞马银行系统！","提示",2); 
+                  JOptionPane.showMessageDialog(null, "客户"+c.getBank_ID()+",您已成功登录！\n欢迎使用飞马银行系统！","提示",1); 
                   frame_switch_to_function();
                }
                else{  //管理员登录
                   System.out.println("管理员登录成功");
-                  JOptionPane.showMessageDialog(null, "管理员，欢迎登录！","提示",2); 
+                  JOptionPane.showMessageDialog(null, "管理员，欢迎登录！","提示",1); 
                   frame_switch_to_function_manager();
                }
             }
@@ -963,63 +926,62 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
     //注册实现
    public void act_register(String sname,String spassword,String sshenfen,String stel,String ssex,String sbirth){  
       System.out.println("正在注册...");
-      //String sid = f1.getText();
-      // String sname = f2.getText();
-      // String spassword =new String(f3.getPassword());
-		// String sshenfen = f4.getText();
-      // String stel = f5.getText();
-      // String ssex = f6.getText();
-      // String sbirth = f7.getText();
-	//	String  money = f8.getText();
-      //  if(!c.setBank_ID(sid)){
-      //       JOptionPane.showMessageDialog(null, "银行卡号输入格式错误！","提示",JOptionPane.ERROR_MESSAGE);       
-      //    }
       if(!c.setName(sname)){
-            JOptionPane.showMessageDialog(null, "用户名输入格式错误！","提示",JOptionPane.ERROR_MESSAGE); 
+            JOptionPane.showMessageDialog(null, "用户名输入格式错误！","警告",JOptionPane.ERROR_MESSAGE); 
          }
       if(!c.setIdentify_ID(sshenfen)){
-         JOptionPane.showMessageDialog(null, "身份证输入格式错误！","提示",JOptionPane.ERROR_MESSAGE); 
+         JOptionPane.showMessageDialog(null, "身份证输入格式错误！","警告",JOptionPane.ERROR_MESSAGE); 
       }  
       if(!c.setPassword(spassword)){
-            JOptionPane.showMessageDialog(null, "密码输入格式错误！","提示",JOptionPane.ERROR_MESSAGE); 
-         }
+            JOptionPane.showMessageDialog(null, "密码输入格式错误！","警告",JOptionPane.ERROR_MESSAGE); 
+      }
       if(!c.setTel(stel)){
-            JOptionPane.showMessageDialog(null, "电话输入格式错误！","提示",JOptionPane.ERROR_MESSAGE); 
-         }
+            JOptionPane.showMessageDialog(null, "电话输入格式错误！","警告",JOptionPane.ERROR_MESSAGE); 
+      }
       if(!c.setBirth(sbirth)){
-            JOptionPane.showMessageDialog(null, "生日输入格式错误！","提示",JOptionPane.ERROR_MESSAGE); 
+            JOptionPane.showMessageDialog(null, "生日输入格式错误！","警告",JOptionPane.ERROR_MESSAGE); 
+      }
+      try{
+         SimpleDateFormat sdf=new SimpleDateFormat("YYYY-MM-dd");
+         Date birth=sdf.parse(sbirth);
+         Calendar cal = Calendar.getInstance();
+         cal.setTime(new Date());
+         cal.add(Calendar.YEAR, -18);
+         Date time_of_18_years_ago =cal.getTime();
+         if(birth.compareTo(time_of_18_years_ago)>0)       //未满十八周岁不能开户
+               JOptionPane.showMessageDialog(null, "您未满十八周岁，无法开户！","警告",JOptionPane.ERROR_MESSAGE); 
+
+         if(c.setName(sname)&&c.setIdentify_ID(sshenfen)&&c.setPassword(spassword)&&c.setTel(stel)&&c.setBirth(sbirth)&&birth.compareTo(time_of_18_years_ago)<=0){ 
+         out.writeUTF("execute");
+         String sql=" insert into users(name,password,identify_ID,tel,gender,birth,money) values('"+sname+"','"+spassword+"','"+sshenfen+"','"+stel+"','"+ssex.charAt(0)+"','"+sbirth+"',"+2000+");";
+         out.writeUTF(sql);
+         c.setMoney(2000.0);    //新客户送2000 
+         out.writeUTF("query");
+         out.writeUTF("select bank_ID from users where identify_ID='"+sshenfen+"';");
+         c.setBank_ID(in.readUTF());
+         JOptionPane.showMessageDialog(null, "注册成功！","提示",1);
+         frame_switch_to_function();
          }
-      if(c.setName(sname)&&c.setIdentify_ID(sshenfen)&&c.setPassword(spassword)&&c.setTel(stel)&&c.setBirth(sbirth)){ 
-         try{
-            out.writeUTF("execute");
-            String sql=" insert into users(name,password,identify_ID,tel,gender,birth)values('"+sname+"','"+spassword+"','"+sshenfen+"','"+stel+"','"+ssex.charAt(0)+"'','"+sbirth+"');";
-            out.writeUTF(sql);
-            JOptionPane.showMessageDialog(null, "注册成功！","提示",JOptionPane.ERROR_MESSAGE);
-            c.setMoney(2000.0);  //新客户送2000   
-            out.writeUTF("query");
-            out.writeUTF("select bank_ID from users where identify_ID='"+sshenfen+"';");
-            c.setBank_ID(in.readUTF());
-         }catch(IOException ex){
-               ex.printStackTrace();
-         }
+      }catch(IOException ex){
+            ex.printStackTrace();
+      }catch(ParseException e){
+         e.printStackTrace();
       }
    }
 
-   public void act_function_manager(){   //管理员的功能选择实现（待完成）
+   public void act_delete_manager(){   //管理员自动销户70以上老人的实现  
+      SimpleDateFormat f= new SimpleDateFormat("yyyy-MM-dd");
+      Calendar cal = Calendar.getInstance();
+		cal.setTime(new Date());
+		cal.add(Calendar.YEAR, -70);
+		String time_of_70_years_ago =f.format(cal.getTime());
 
-   }
-
-   public void act_delete_manager(){   //管理员销户实现   //需要改
-      System.out.println("正在销户...");
-      String sname=d1.getText(),        //改成bank_ID
-      spassword=new String(d2.getPassword());
-         //先判断一下是否存在该人
       try{
             out.writeUTF("execute");
-            String sql2="delete from users where name='"+sname+"' and password='"+spassword+"';";
+            String sql2="delete from users where birth<= '"+time_of_70_years_ago+"';";
             out.writeUTF(sql2);
-            System.out.println("删除成功！");
-            JOptionPane.showMessageDialog(null, "销户成功！","提示",JOptionPane.ERROR_MESSAGE); 
+            System.out.println("销户成功！");
+            JOptionPane.showMessageDialog(null, "年满70岁及以上的老人全部销户成功！","提示",1); 
          } 
       catch(IOException ex){
          ex.printStackTrace();
@@ -1085,40 +1047,48 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       now=f_ru;
    }
 
-   public void act_modify(){  //修改信息实现  //没有考虑输入不符合格式的情况
+    //修改信息实现 
+   public void act_modify(String name,String pass,String tel,String gender,String birth){ 
       System.out.println("正在修改信息中...");
       try {
          out.writeUTF("execute");
          String sql="update users set name ='"+m_name.getText()+"' where bank_ID="+c.getBank_ID()+";";
-         if(!m_name.getText().equals(c.getName())){
-            sql="update users set name ='"+m_name.getText()+"' where bank_ID="+c.getBank_ID()+";";
-            out.writeUTF(sql);
-            c.setName(m_name.getText());
-            JOptionPane.showMessageDialog(null, "姓名修改成功","提示",2);
+         if(!name.equals(c.getName())){
+            if(!c.setName(name)) JOptionPane.showMessageDialog(null, "修改的姓名不符合格式！","警告",0);
+            else{
+               sql="update users set name ='"+name+"' where bank_ID="+c.getBank_ID()+";";
+               out.writeUTF(sql);
+               JOptionPane.showMessageDialog(null, "姓名修改成功","提示",2);
+            }
          }
-         if(!m_pass.getText().equals(c.getPassword())){
-            sql="update users set password ='"+m_pass.getText()+"' where bank_ID="+c.getBank_ID()+";";
-            out.writeUTF(sql);
-            c.setPassword(m_pass.getText());
-            JOptionPane.showMessageDialog(null, "密码修改成功","提示",2);
+         if(!pass.equals(c.getPassword())){
+            if(!c.setPassword(pass)) JOptionPane.showMessageDialog(null, "修改的密码不符合格式！","警告",0);
+            else{
+               sql="update users set password ='"+pass+"' where bank_ID="+c.getBank_ID()+";";
+               out.writeUTF(sql);
+               JOptionPane.showMessageDialog(null, "密码修改成功","提示",2);
+            }
          }
-         if(!m_tel.getText().equals(c.getTel())){
-            sql="update users set tel ='"+m_tel.getText()+"' where bank_ID="+c.getBank_ID()+";";
-            out.writeUTF(sql);
-            c.setTel(m_tel.getText());
-            JOptionPane.showMessageDialog(null, "电话号码修改成功","提示",2);
+         if(!tel.equals(c.getTel())){
+            if(!c.setTel(tel)) JOptionPane.showMessageDialog(null, "修改的电话号码不符合格式！","警告",0);
+            else{
+               sql="update users set tel ='"+tel+"' where bank_ID="+c.getBank_ID()+";";
+               out.writeUTF(sql);
+               JOptionPane.showMessageDialog(null, "电话号码修改成功","提示",2);
+            }
          }
-         if(!m_gender.getText().equals(String.valueOf(c.getGender()))){
-            sql="update users set gender ='"+m_gender.getText()+"' where bank_ID="+c.getBank_ID()+";";
+         if(!gender.equals(String.valueOf(c.getGender()))){
+            sql="update users set gender ='"+gender+"' where bank_ID="+c.getBank_ID()+";";
             out.writeUTF(sql);
-            c.setGender(m_gender.getText().charAt(0));
             JOptionPane.showMessageDialog(null, "性别修改成功","提示",2);
          }
-         if(!m_birth.getText().equals(c.getBirth())){
-            sql="update users set birth ='"+m_birth.getText()+"' where bank_ID="+c.getBank_ID()+";";
-            out.writeUTF(sql);
-            c.setBirth(m_birth.getText());
-            JOptionPane.showMessageDialog(null, "出生日期修改成功","提示",2);
+         if(!birth.equals(c.getBirth())){
+            if(!c.setBirth(birth)) JOptionPane.showMessageDialog(null, "修改的出生日期不符合格式！","警告",0);
+            else{
+               sql="update users set birth ='"+birth+"' where bank_ID="+c.getBank_ID()+";";
+               out.writeUTF(sql);
+               JOptionPane.showMessageDialog(null, "出生日期修改成功","提示",2);
+            }
          }
 
       } catch (IOException e) {
@@ -1162,7 +1132,7 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       }
    }
 
-   public void act_transfer(){  //转账实现   //暂时没考虑转账的客户余额不足的问题
+   public void act_transfer(){  //转账实现   
       System.out.println("正在转账中...");
       if(!s.setBank_ID(t_bankid.getText())){
          JOptionPane.showMessageDialog(null, "银行账号格式错误\n请重新输入","提示",JOptionPane.ERROR_MESSAGE);
@@ -1175,7 +1145,6 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
             int count=in.readInt();
             if(count==0) JOptionPane.showMessageDialog(null, "不存在该用户！\n请重新输入","提示",JOptionPane.ERROR_MESSAGE); 
             else{
-               //s.setBank_ID(t_bankid.getText());
                out.writeUTF("query");
                sql="select name from users where bank_ID="+s.getBank_ID()+";";
                out.writeUTF(sql);
@@ -1191,7 +1160,6 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
                yes=new JButton("确认");
                JLabel message1=new JLabel();
                message1.setText("当前收款人姓名为"+s.getName()+",转账金额为"+t_money.getText());
-               //JLabel message2=new JLabel("请在核实正确后点击"确认"进行转账");
                Box vb = Box.createVerticalBox();
                vb.add(message1);
                vb.add(Box.createVerticalStrut(10));
@@ -1249,29 +1217,23 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
    }
 
    public void re_apdelect() {   //确认并完成申请销户实现
-      now.setVisible(false);
-      JFrame f_1=new JFrame("完成申请销户");
-      f_1.setLayout(null);
-      JLabel message_afd=new JLabel();
-      message_afd.setText("已为您申请销户");
-      message_afd.setVisible(true);
-      back_1 = new JButton("退出");
-      JPanel p=new JPanel();
-      p.add(message_afd);
-      p.add(back_1);
-      f_1.add(p);
-      p.setBounds(0, 40, 300, 100);
-      back_1.addActionListener(this);
-      back_1.setEnabled(true);
-      f_1.setBounds(500,250,300,200);
-      f_1.setVisible(true);
-      f_1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-      now=f_1;
+      try{
+         out.writeUTF("execute");
+         String sql2="delete from users where bank_ID='"+c.getBank_ID()+"';";
+         out.writeUTF(sql2);
+         JOptionPane.showMessageDialog(null, "销户成功！\n飞马银行感谢您的多年陪伴！","提示",1); 
+         System.exit(0);
+      } 
+      catch(IOException ex){
+         JOptionPane.showMessageDialog(null, "系统出现异常，销户失败！","警告",JOptionPane.ERROR_MESSAGE); 
+         ex.printStackTrace();
+      }
    }
 
    public void act_generatepdf(){  //生成pdf报表
      try {
+         SimpleDateFormat f= new SimpleDateFormat("yyyy");
+         String thisyear= f.format(new Date(System.currentTimeMillis()));
          BaseFont bfComic = BaseFont.createFont("c://windows//fonts//SIMHEI.TTF", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
          Font font = new Font(bfComic,14);
          Font tfont = new Font(bfComic,25);
@@ -1279,7 +1241,7 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
          String filename=".\\报表.pdf";
          PdfWriter.getInstance(d, new FileOutputStream(filename));
          d.open();
-         Paragraph title=new Paragraph("飞马银行年度报表",tfont);
+         Paragraph title=new Paragraph(thisyear+"年飞马银行年度报表",tfont);
          title.setAlignment(Element.ALIGN_CENTER);
          d.add(title);
          d.add(new Paragraph(" "));
@@ -1293,18 +1255,20 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
          out.writeUTF("select sum(money) from users;");
          d.add(new Paragraph("目前飞马银行总存储金额："+Double.parseDouble(in.readUTF()),font));
          d.close();
-         JOptionPane.showMessageDialog(null, "报表生成成功！","提示",2);
+         JOptionPane.showMessageDialog(null, "报表生成成功！","提示",1);
      } catch (IOException e) {
+         JOptionPane.showMessageDialog(null, "报表生成失败！请在终端查看问题。","警告",0);
          System.out.println("IOException: ");
          e.printStackTrace();
      } 
      catch (DocumentException e){
+         JOptionPane.showMessageDialog(null, "报表生成失败！请在终端查看问题。","警告",0);
          System.out.println("DocumentException: ");
          e.printStackTrace();
      }
    }
 
-   public void act_excelreadin(){  //根据excel文件批量开户
+   public void act_excelreadin(){  //根据excel文件批量开户  (excel文件必须符合一定格式，否则无法完成此功能)
       String filename=filepath.getText();
       if(!new File(filename).exists()) JOptionPane.showMessageDialog(null, "该文件不存在！","警告",0);
       else{
@@ -1327,8 +1291,9 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
                   }
                }
             } catch (IOException e) {
-               System.out.println("IOException：");
-               e.printStackTrace();
+               System.out.println("文件内容格式不符，无法完成批量导入功能！");
+               JOptionPane.showMessageDialog(null, "文件内容格式不符，无法完成批量导入功能！","警告",0);
+               //e.printStackTrace();
             }
          }
          else{  //是.xls文件
@@ -1350,8 +1315,10 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
                   }
                }
            } catch (IOException e) {
-               System.out.println("IOException：");
-               e.printStackTrace();
+               System.out.println("文件内容格式不符，无法完成批量导入功能！");
+               JOptionPane.showMessageDialog(null, "文件内容格式不符，无法完成批量导入功能！","警告",0);
+               //System.out.println("IOException：");
+               //e.printStackTrace();
            }
          }
          frame_switch_to_function_manager();
@@ -1422,11 +1389,11 @@ public class graphic implements ActionListener{  //整个客户端页面的构�
       frame_excelreadin();
    } 
 
-   //转到管理员销户界面(待完成)
-   public void frame_switch_to_delete(){
-      now.setVisible(false);
-      frame_delete_manager();
-   }
+   // //转到管理员销户界面(待完成)
+   // public void frame_switch_to_delete(){
+   //    now.setVisible(false);
+   //    frame_delete_manager();
+   // }
 
   //从现在的页面跳转到查询页面(待优化)
   public void frame_switch_to_inquery(){

@@ -12,14 +12,14 @@ public class client {
     private char gender;
     private Date birth;
     private Double money;  
-    private Boolean xiaohu;   //false为要销户
+    //private Boolean xiaohu;   //false为要销户
 
-    public Boolean getXiaohu() {
-        return xiaohu;
-    }
-    public void setXiaohu(Boolean xiaohu) {
-        this.xiaohu = xiaohu;
-    }
+    // public Boolean getXiaohu() {
+    //     return xiaohu;
+    // }
+    // public void setXiaohu(Boolean xiaohu) {
+    //     this.xiaohu = xiaohu;
+    // }
 
     public String getBank_ID() {
         return bank_ID;
