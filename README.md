@@ -1,39 +1,15 @@
 # FeiMaBank
 
-#### 介绍
-{**以下是 Gitee 平台说明，您可以替换此简介**
-Gitee 是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN）。专为开发者提供稳定、高效、安全的云端软件开发协作平台
-无论是个人、团队、或是企业，都能够用 Gitee 实现代码托管、项目管理、协作开发。企业项目请看 [https://gitee.com/enterprises](https://gitee.com/enterprises)}
+#### 项目名称
+飞马银行管理系统
 
-#### 软件架构
-软件架构说明
+#### 采取的模式
+C/S 模式（服务端客户端模式）
 
+#### 运用的技术
+面向对象技术、网络技术、流技术、数据库技术、多线程技术、GUI 技术
 
-#### 安装教程
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 使用说明
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 参与贡献
-
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
-
-
-#### 特技
-
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+#### 具体介绍
+    项目主要可以分为服务器端和客户端。
+    飞马银行服务器端部署在华为弹性云服务器上，服务器开启运行后，将会自动连接用于存储银行数据的同样部署在该云服务器上的 MYSQL 数据库，并一直处于工作状态，等待客户端连接，该服务器通过网络技术连接客户端，利用多线程技术实现多个客户同时操作登录操作，每一个客户端申请连接，就开一个线程提供服务，利用同步锁技术保证数据库内的数据线程安全，客户的信息安全和财产安全可以得到保证。
+    飞马银行客户端则在本地计算机运行，客户端无法直接访问 MYSQL 数据库，而是通过服务端间接操作数据库，客户端通过 GUI 技术用清晰明了的界面图形为客户和管理员提供各种服务。
